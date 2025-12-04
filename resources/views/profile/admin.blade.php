@@ -116,14 +116,14 @@
                     </div>
                 </a>
 
-                <a href="#" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-purple-500/50 transition group">
+                <a href="{{ route('leaderboard.index') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-purple-500/50 transition group">
                     <div class="flex items-center space-x-4">
                         <div class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition">
                             <i class="fas fa-chart-line text-purple-400 text-2xl"></i>
                         </div>
                         <div>
-                            <h4 class="text-white font-bold text-lg">Estadísticas</h4>
-                            <p class="text-gray-400 text-sm">Reportes y análisis</p>
+                            <h4 class="text-white font-bold text-lg">Clasificación</h4>
+                            <p class="text-gray-400 text-sm">Ver rankings</p>
                         </div>
                     </div>
                 </a>

@@ -37,4 +37,17 @@ class Contest extends Model
     {
         return $this->hasMany(ContestRegistration::class);
     }
+
+
+    /**
+ * Relación: Un concurso puede tener muchos jueces
+ */
+public function judges()
+{
+    return $this->belongsToMany(Judge::class, 'contest_judge')
+                ->withPivot('role')
+                ->withTimestamps();
+}
+
+
 }

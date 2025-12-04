@@ -29,13 +29,19 @@
 
                         @if(Auth::user()->isAdmin())
                             {{-- SOLO ADMIN: Panel de Administración --}}
-                            <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.*')">
+                            <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
                                 <i class="fas fa-shield-alt mr-2"></i>
                                 {{ __('Panel Admin') }}
                             </x-nav-link>
 
+                            {{-- SOLO ADMIN: Jueces --}}
+                            <x-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
+                                <i class="fas fa-gavel mr-2"></i>
+                                {{ __('Jueces') }}
+                            </x-nav-link>
+
                             {{-- SOLO ADMIN: Clasificación --}}
-                            <x-nav-link href="#" :active="false">
+                            <x-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.index')">
                                 <i class="fas fa-chart-bar mr-2"></i>
                                 {{ __('Clasificación') }}
                             </x-nav-link>
@@ -48,18 +54,16 @@
                         </x-nav-link>
 
                         {{-- Blog - Visible para todos los autenticados --}}
-                        <x-nav-link href="#" :active="false">
+                        <x-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">
                             <i class="fas fa-blog mr-2"></i>
                             {{ __('Blog') }}
                         </x-nav-link>
 
                         {{-- Sedes - Visible para todos los autenticados --}}
-                        <x-nav-link href="#" :active="false">
+                        <x-nav-link :href="route('venues.index')" :active="request()->routeIs('venues.index')">
                             <i class="fas fa-map-marker-alt mr-2"></i>
                             {{ __('Sedes') }}
                         </x-nav-link>
-                    @else
-                        {{-- Si no está autenticado, solo muestra Inicio --}}
                     @endauth
                 </div>
             </div>
@@ -160,13 +164,19 @@
 
                 @if(Auth::user()->isAdmin())
                     {{-- SOLO ADMIN: Panel Admin --}}
-                    <x-responsive-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.*')">
+                    <x-responsive-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
                         <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                         {{ __('Panel Admin') }}
                     </x-responsive-nav-link>
 
+                    {{-- SOLO ADMIN: Jueces --}}
+                    <x-responsive-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
+                        <i class="fas fa-gavel mr-2"></i>
+                        {{ __('Jueces') }}
+                    </x-responsive-nav-link>
+
                     {{-- SOLO ADMIN: Clasificación --}}
-                    <x-responsive-nav-link href="#" :active="false">
+                    <x-responsive-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.index')">
                         <i class="fas fa-chart-bar mr-2"></i>
                         {{ __('Clasificación') }}
                     </x-responsive-nav-link>
@@ -179,13 +189,13 @@
                 </x-responsive-nav-link>
 
                 {{-- Blog --}}
-                <x-responsive-nav-link href="#" :active="false">
+                <x-responsive-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">
                     <i class="fas fa-blog mr-2"></i>
                     {{ __('Blog') }}
                 </x-responsive-nav-link>
 
                 {{-- Sedes --}}
-                <x-responsive-nav-link href="#" :active="false">
+                <x-responsive-nav-link :href="route('venues.index')" :active="request()->routeIs('venues.index')">
                     <i class="fas fa-map-marker-alt mr-2"></i>
                     {{ __('Sedes') }}
                 </x-responsive-nav-link>

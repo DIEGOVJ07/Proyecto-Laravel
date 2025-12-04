@@ -58,4 +58,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    
+    public function leaderboard()
+    {
+        return $this->hasOne(Leaderboard::class);
+    }
+
+
+
 }

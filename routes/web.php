@@ -3,8 +3,12 @@
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContestController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Admin\AdminContestController;
+use App\Http\Controllers\Admin\JudgeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 // Landing page (pública)
@@ -37,11 +41,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/concursos/{id}', [ContestController::class, 'show'])->name('contests.show');
     Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('contests.register');
     Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('contests.cancel');
+
+    // Sedes (accesible para todos los autenticados)
+    Route::get('/sedes', [VenueController::class, 'index'])->name('venues.index');
+    Route::get('/sedes/{id}', [VenueController::class, 'show'])->name('venues.show');
+    
+    // Blog (accesible para todos los autenticados)
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+    Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
+
+    // Clasificación (Leaderboard)
+    Route::get('/clasificacion', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
 
 // Rutas de administración (solo admin)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Panel de concursos
+    
+    // ==========================================
+    // GESTIÓN DE CONCURSOS
+    // ==========================================
     Route::get('/concursos', [AdminContestController::class, 'index'])->name('contests.index');
     Route::get('/concursos/crear', [AdminContestController::class, 'create'])->name('contests.create');
     Route::post('/concursos', [AdminContestController::class, 'store'])->name('contests.store');
@@ -53,6 +71,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/concursos/{contestId}/equipos/{registrationId}', [AdminContestController::class, 'deleteTeam'])->name('contests.teams.delete');
     Route::post('/concursos/{contestId}/equipos/{registrationId}/clasificar', [AdminContestController::class, 'qualify'])->name('contests.teams.qualify');
     Route::post('/concursos/{contestId}/equipos/{registrationId}/desclasificar', [AdminContestController::class, 'disqualify'])->name('contests.teams.disqualify');
+    
+    // ==========================================
+    // GESTIÓN DE JUECES
+    // ==========================================
+    // CRUD de Jueces
+    Route::get('/jueces', [JudgeController::class, 'index'])->name('judges.index');
+    Route::get('/jueces/crear', [JudgeController::class, 'create'])->name('judges.create');
+    Route::post('/jueces', [JudgeController::class, 'store'])->name('judges.store');
+    Route::get('/jueces/{judge}/editar', [JudgeController::class, 'edit'])->name('judges.edit');
+    Route::put('/jueces/{judge}', [JudgeController::class, 'update'])->name('judges.update');
+    Route::delete('/jueces/{judge}', [JudgeController::class, 'destroy'])->name('judges.destroy');
+    Route::post('/jueces/{judge}/toggle-status', [JudgeController::class, 'toggleStatus'])->name('judges.toggle-status');
+    
+    // Asignaciones de jueces a concursos
+    Route::get('/jueces/{judge}/asignaciones', [JudgeController::class, 'assignments'])->name('judges.assignments');
+    Route::post('/jueces/{judge}/asignar', [JudgeController::class, 'assignToContest'])->name('judges.assign');
+    Route::delete('/jueces/{judge}/concursos/{contest}', [JudgeController::class, 'removeFromContest'])->name('judges.remove-contest');
 });
 
 // Rutas Breeze
