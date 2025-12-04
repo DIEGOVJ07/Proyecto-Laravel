@@ -18,7 +18,7 @@ class AdminContestController extends Controller
             ->orderBy('start_date', 'desc')
             ->paginate(10);
 
-        return view('admin.contests.index', compact('contests'));
+        return view('admin.concursos.index', compact('contests'));
     }
 
     /**
@@ -28,7 +28,7 @@ class AdminContestController extends Controller
     {
         $contest = Contest::with(['registrations.user'])->findOrFail($id);
         
-        return view('admin.contests.teams', compact('contest'));
+        return view('admin.concursos.teams', compact('contest'));
     }
 
     /**
@@ -36,7 +36,7 @@ class AdminContestController extends Controller
      */
     public function create()
     {
-        return view('admin.contests.create');
+        return view('admin.concursos.create');
     }
 
     /**

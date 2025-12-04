@@ -7,7 +7,7 @@ use App\Models\Leaderboard;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class LeaderboardSeeder extends Seeder
+class TablaPosicionesSeeder extends Seeder
 {
     public function run(): void
     {

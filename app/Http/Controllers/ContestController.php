@@ -27,7 +27,7 @@ class ContestController extends Controller
             $isRegistered = $registration !== null;
         }
         
-        return view('contests.show', compact('contest', 'isRegistered', 'registration'));
+        return view('concursos.show', compact('contest', 'isRegistered', 'registration'));
     }
 
     /**

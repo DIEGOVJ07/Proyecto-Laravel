@@ -1,13 +1,13 @@
-<nav x-data="{ open: false }" class="bg-cb-card border-b border-cb-border">
+<nav x-data="{ open: false }" class="bg-cb-dark border-b-2 border-cb-green/30 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('welcome') }}">
+                    <a href="{{ route('welcome') }}" class="hover:opacity-80 transition">
                         <div class="text-white text-2xl font-extrabold flex items-center space-x-2">
-                            <i class="fas fa-terminal text-cb-green"></i>
-                            <span>CodeBattle</span>
+                            <i class="fas fa-terminal text-cb-green drop-shadow-lg"></i>
+                            <span class="drop-shadow-lg">CodeBattle</span>
                         </div>
                     </a>
                 </div>
@@ -27,7 +27,7 @@
                             {{ __('Concursos') }}
                         </x-nav-link>
 
-                        @if(Auth::user()->isAdmin())
+                        @role('admin')
                             {{-- SOLO ADMIN: Panel de Administración --}}
                             <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
                                 <i class="fas fa-shield-alt mr-2"></i>
@@ -45,7 +45,7 @@
                                 <i class="fas fa-chart-bar mr-2"></i>
                                 {{ __('Clasificación') }}
                             </x-nav-link>
-                        @endif
+                        @endrole
                         
                         {{-- Mi Perfil - Visible para todos los autenticados --}}
                         <x-nav-link :href="route('profile.index')" :active="request()->routeIs('profile.index')">
@@ -75,9 +75,9 @@
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-400 bg-cb-card hover:text-gray-200 focus:outline-none transition ease-in-out duration-150">
                                 <div class="flex items-center space-x-2">
-                                    @if(Auth::user()->isAdmin())
+                                    @role('admin')
                                         <i class="fas fa-crown text-yellow-400"></i>
-                                    @endif
+                                    @endrole
                                     <span>{{ Auth::user()->name }}</span>
                                 </div>
                                 <div class="ml-1">
@@ -89,23 +89,27 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            @if(Auth::user()->isAdmin())
+                            @role('admin')
                                 <x-dropdown-link :href="route('admin.contests.index')">
                                     <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                                     <span class="text-gray-300">{{ __('Panel de Administración') }}</span>
                                 </x-dropdown-link>
                                 <div class="border-t border-cb-border my-1"></div>
-                            @endif
+                            @endrole
 
+                            @can('ver-perfil')
                             <x-dropdown-link :href="route('profile.index')">
                                 <i class="fas fa-user mr-2 text-cb-green"></i>
                                 <span class="text-gray-300">{{ __('Mi Perfil') }}</span>
                             </x-dropdown-link>
+                            @endcan
 
+                            @can('editar-perfil')
                             <x-dropdown-link :href="route('profile.edit')">
                                 <i class="fas fa-cog mr-2 text-gray-400"></i>
                                 <span class="text-gray-300">{{ __('Configuración') }}</span>
                             </x-dropdown-link>
+                            @endcan
 
                             <div class="border-t border-cb-border my-1"></div>
 
@@ -121,7 +125,7 @@
                     </x-dropdown>
                 @else
                     {{-- Botón de login para usuarios no autenticados --}}
-                    <a href="{{ route('login') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-xl">
+                    <a href="{{ route('login') }}" class="bg-cb-green hover:bg-emerald-500 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-lg hover:shadow-cb-green/50 hover:scale-105 transform">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         Iniciar Sesión
                     </a>
@@ -147,7 +151,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-cb-card">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-cb-dark border-t border-cb-green/30">
         @auth
             <div class="pt-2 pb-3 space-y-1">
                 {{-- Inicio --}}
@@ -157,57 +161,66 @@
                 </x-responsive-nav-link>
 
                 {{-- Concursos --}}
+                @can('ver-concursos')
                 <x-responsive-nav-link href="{{ route('welcome') }}#concursos" :active="false">
                     <i class="fas fa-trophy mr-2"></i>
                     {{ __('Concursos') }}
                 </x-responsive-nav-link>
+                @endcan
 
-                @if(Auth::user()->isAdmin())
-                    {{-- SOLO ADMIN: Panel Admin --}}
+                {{-- Panel Admin - Solo admin --}}
+                @role('admin')
                     <x-responsive-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
                         <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                         {{ __('Panel Admin') }}
                     </x-responsive-nav-link>
 
-                    {{-- SOLO ADMIN: Jueces --}}
                     <x-responsive-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
                         <i class="fas fa-gavel mr-2"></i>
                         {{ __('Jueces') }}
                     </x-responsive-nav-link>
+                @endrole
 
-                    {{-- SOLO ADMIN: Clasificación --}}
-                    <x-responsive-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.index')">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        {{ __('Clasificación') }}
-                    </x-responsive-nav-link>
-                @endif
+                {{-- Clasificación --}}
+                @can('ver-clasificacion')
+                <x-responsive-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.index')">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    {{ __('Clasificación') }}
+                </x-responsive-nav-link>
+                @endcan
 
                 {{-- Mi Perfil --}}
+                @can('ver-perfil')
                 <x-responsive-nav-link :href="route('profile.index')" :active="request()->routeIs('profile.index')">
                     <i class="fas fa-user mr-2"></i>
                     {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
+                @endcan
 
                 {{-- Blog --}}
+                @can('ver-blog')
                 <x-responsive-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">
                     <i class="fas fa-blog mr-2"></i>
                     {{ __('Blog') }}
                 </x-responsive-nav-link>
+                @endcan
 
                 {{-- Sedes --}}
+                @can('ver-sedes')
                 <x-responsive-nav-link :href="route('venues.index')" :active="request()->routeIs('venues.index')">
                     <i class="fas fa-map-marker-alt mr-2"></i>
                     {{ __('Sedes') }}
                 </x-responsive-nav-link>
+                @endcan
             </div>
 
             <!-- User Info Section (Mobile) -->
             <div class="pt-4 pb-1 border-t border-cb-border">
                 <div class="px-4">
                     <div class="font-medium text-base text-white flex items-center space-x-2">
-                        @if(Auth::user()->isAdmin())
+                        @role('admin')
                             <i class="fas fa-crown text-yellow-400"></i>
-                        @endif
+                        @endrole
                         <span>{{ Auth::user()->name }}</span>
                     </div>
                     <div class="font-medium text-sm text-gray-400">{{ Auth::user()->email }}</div>

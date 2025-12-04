@@ -29,7 +29,7 @@ class ProfileController extends Controller
         ];
 
         // Si es administrador, mostrar vista de admin
-        if ($user->isAdmin()) {
+        if ($user->hasRole('admin')) {
             // Obtener todos los concursos para el admin
             $contests = Contest::withCount('registrations')
                 ->orderBy('start_date', 'desc')

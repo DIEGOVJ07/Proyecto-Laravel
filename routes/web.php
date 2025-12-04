@@ -42,11 +42,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('contests.register');
     Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('contests.cancel');
 
-    // Sedes (accesible para todos los autenticados)
+    // Sedes
     Route::get('/sedes', [VenueController::class, 'index'])->name('venues.index');
     Route::get('/sedes/{id}', [VenueController::class, 'show'])->name('venues.show');
     
-    // Blog (accesible para todos los autenticados)
+    // Blog
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
 

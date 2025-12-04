@@ -150,7 +150,7 @@ class VenueController extends Controller
             ],
         ];
 
-        return view('venues.index', compact('venues'));
+        return view('sedes.index', compact('venues'));
     }
 
     public function show($id)

@@ -46,6 +46,6 @@ class LeaderboardController extends Controller
             'active_today' => rand(150, 300),
         ];
 
-        return view('leaderboard.index', compact('topUsers', 'hallOfFame', 'userPosition', 'stats'));
+        return view('clasificacion.index', compact('topUsers', 'hallOfFame', 'userPosition', 'stats'));
     }
 }

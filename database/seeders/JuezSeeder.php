@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Judge;
 use Illuminate\Database\Seeder;
 
-class JudgeSeeder extends Seeder
+class JuezSeeder extends Seeder
 {
     public function run(): void
     {

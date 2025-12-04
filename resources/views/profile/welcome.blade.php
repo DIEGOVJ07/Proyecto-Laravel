@@ -311,14 +311,12 @@
                             <p class="text-gray-400 mb-8">
                                 Los nuevos desafíos se publicarán pronto. ¡Mantente atento!
                             </p>
-                            @auth
-                                @if(Auth::user()->isAdmin())
-                                    <a href="{{ route('admin.contests.create') }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Crear Primer Concurso
-                                    </a>
-                                @endif
-                            @endauth
+                            @role('admin')
+                                <a href="{{ route('admin.contests.create') }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Crear Primer Concurso
+                                </a>
+                            @endrole
                         </div>
                     @endif
                 </section>

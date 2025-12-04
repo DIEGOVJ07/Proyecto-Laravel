@@ -25,7 +25,7 @@ class JudgeController extends Controller
             'total_assignments' => \DB::table('contest_judge')->count(),
         ];
 
-        return view('admin.judges.index', compact('judges', 'stats'));
+        return view('admin.jueces.index', compact('judges', 'stats'));
     }
 
     /**
@@ -33,7 +33,7 @@ class JudgeController extends Controller
      */
     public function create()
     {
-        return view('admin.judges.create');
+        return view('admin.jueces.create');
     }
 
     /**
@@ -66,7 +66,7 @@ class JudgeController extends Controller
      */
     public function edit(Judge $judge)
     {
-        return view('admin.judges.edit', compact('judge'));
+        return view('admin.jueces.edit', compact('judge'));
     }
 
     /**
@@ -115,7 +115,7 @@ class JudgeController extends Controller
                                    ->where('status', '!=', 'Finalizado')
                                    ->get();
 
-        return view('admin.judges.assignments', compact('judge', 'availableContests'));
+        return view('admin.jueces.assignments', compact('judge', 'availableContests'));
     }
 
     /**

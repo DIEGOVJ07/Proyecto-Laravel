@@ -5,13 +5,13 @@ namespace Database\Seeders;
 use App\Models\Contest;
 use Illuminate\Database\Seeder;
 
-class ContestSeeder extends Seeder
+class ConcursoSeeder extends Seeder
 {
     public function run(): void
     {
         $contests = [
             [
-                'name' => 'Weekly Challenge #47',
+                'name' => 'Desafío Semanal #47',
                 'description' => 'Algoritmos de búsqueda y ordenamiento',
                 'status' => 'Activo',
                 'difficulty' => 'Medio',
@@ -27,7 +27,7 @@ class ContestSeeder extends Seeder
                 'max_team_members' => 3,
             ],
             [
-                'name' => 'Data Structures Masterclass',
+                'name' => 'Masterclass de Estructuras de Datos',
                 'description' => 'Árboles, grafos y estructuras avanzadas',
                 'status' => 'Próximamente',
                 'difficulty' => 'Difícil',
@@ -43,7 +43,7 @@ class ContestSeeder extends Seeder
                 'max_team_members' => 2,
             ],
             [
-                'name' => 'Beginner Bootcamp',
+                'name' => 'Bootcamp para Principiantes',
                 'description' => 'Introducción a la programación competitiva',
                 'status' => 'Próximamente',
                 'difficulty' => 'Fácil',
@@ -59,7 +59,7 @@ class ContestSeeder extends Seeder
                 'max_team_members' => 4,
             ],
             [
-                'name' => 'Dynamic Programming Sprint',
+                'name' => 'Sprint de Programación Dinámica',
                 'description' => 'Optimización y programación dinámica',
                 'status' => 'Próximamente',
                 'difficulty' => 'Difícil',
@@ -75,7 +75,7 @@ class ContestSeeder extends Seeder
                 'max_team_members' => 2,
             ],
             [
-                'name' => 'Graph Theory Challenge',
+                'name' => 'Reto de Teoría de Grafos',
                 'description' => 'Algoritmos de grafos y caminos mínimos',
                 'status' => 'Finalizado',
                 'difficulty' => 'Medio',
@@ -91,7 +91,7 @@ class ContestSeeder extends Seeder
                 'max_team_members' => 3,
             ],
             [
-                'name' => 'String Algorithms Battle',
+                'name' => 'Batalla de Algoritmos de Cadenas',
                 'description' => 'Manipulación y búsqueda de cadenas',
                 'status' => 'Finalizado',
                 'difficulty' => 'Medio',
