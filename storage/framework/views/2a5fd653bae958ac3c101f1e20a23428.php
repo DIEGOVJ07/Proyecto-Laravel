@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CodeBattle - Plataforma de Programación Competitiva</title>
     
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,69 +21,15 @@
         }
     </script>
 
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const targetTimeElement = document.getElementById('countdown-timer');
-            if (!targetTimeElement) return;
-
-            const targetTime = <?php echo e($nextEvent->countdown_target); ?> * 1000;
-            const timer = targetTimeElement;
-            const interval = setInterval(updateCountdown, 1000);
-
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = targetTime - now;
-
-                if (distance < 0) {
-                    clearInterval(interval);
-                    timer.innerHTML = "<span class='col-span-4 text-sm font-semibold'>¡El evento ha comenzado!</span>";
-                    return;
-                }
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                const formatTime = (time) => String(time).padStart(2, '0');
-
-                timer.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(days)}</span>
-                        <span class="text-sm">Días</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(hours)}</span>
-                        <span class="text-sm">Horas</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(minutes)}</span>
-                        <span class="text-sm">Min</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(seconds)}</span>
-                        <span class="text-sm">Seg</span>
-                    </div>
-                `;
-            }
-
-            updateCountdown();
-        });
-    </script>
 </head>
 
 <body class="font-sans antialiased bg-cb-dark text-white">
     <div class="min-h-screen">
 
-        
         <header class="sticky top-0 z-50 bg-cb-card shadow-lg border-b border-cb-border">
             <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
-                    
                     <div class="flex items-center">
                         <a href="<?php echo e(route('welcome')); ?>" class="text-2xl font-extrabold text-cb-green flex items-center space-x-2">
                             <i class="fas fa-terminal"></i>
@@ -92,72 +37,35 @@
                         </a>
                     </div>
 
-                    
                     <nav class="hidden sm:flex sm:space-x-8">
-                        <a href="<?php echo e(route('welcome')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('welcome') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green'); ?> text-sm font-medium transition">
-                            <i class="fas fa-home mr-2"></i>
+                        <a href="<?php echo e(route('welcome')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('welcome') ? 'border-cb-green text-white' : 'border-transparent text-gray-300'); ?> text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                             Inicio
                         </a>
-                        
+                        <a href="#concursos" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-300 hover:text-white hover:border-cb-green transition duration-150">
+                            Concursos
+                        </a>
                         <?php if(auth()->guard()->check()): ?>
-                            <a href="#concursos" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-300 hover:text-white hover:border-cb-green transition text-sm font-medium">
-                                <i class="fas fa-trophy mr-2"></i>
-                                Concursos
-                            </a>
-                            
-                            <a href="<?php echo e(route('leaderboard.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-300 hover:text-white hover:border-cb-green transition text-sm font-medium">
-                                <i class="fas fa-chart-bar mr-2"></i>
+                            <a href="<?php echo e(route('leaderboard.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('leaderboard.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300'); ?> text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Clasificación
                             </a>
-                            <a href="<?php echo e(route('profile.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('profile.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green'); ?> text-sm font-medium transition">
-                                <i class="fas fa-user mr-2"></i>
+                            <a href="<?php echo e(route('profile.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('profile.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300'); ?> text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Mi Perfil
                             </a>
-                            <a href="<?php echo e(route('blog.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('blog.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green'); ?> text-sm font-medium transition duration-150">
-                            <i class="fas fa-blog mr-2"></i>
+                            <a href="<?php echo e(route('blog.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('blog.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300'); ?> text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Blog
-                                    </a>
-                            <
-                            <a href="<?php echo e(route('venues.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('venues.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green'); ?> transition text-sm font-medium">
-                              <i class="fas fa-map-marker-alt mr-2"></i>
-                              Sedes
-                                </a>
-
+                            </a>
+                            <a href="<?php echo e(route('venues.index')); ?>" class="inline-flex items-center px-1 pt-1 border-b-2 <?php echo e(request()->routeIs('venues.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300'); ?> text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
+                                Sedes
+                            </a>
                         <?php endif; ?>
                     </nav>
 
-                    
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
                         <?php if(auth()->guard()->check()): ?>
-                            
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 text-gray-300 hover:text-white transition">
-                                    <span class="font-medium"><?php echo e(Auth::user()->name); ?></span>
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </button>
-                                
-                                
-                                <div class="absolute right-0 mt-2 w-48 bg-cb-card border border-cb-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                    <a href="<?php echo e(route('profile.index')); ?>" class="block px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                        <i class="fas fa-user mr-2"></i>
-                                        Mi Perfil
-                                    </a>
-                                    <a href="<?php echo e(route('profile.edit')); ?>" class="block px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                        <i class="fas fa-cog mr-2"></i>
-                                        Configuración
-                                    </a>
-                                    <hr class="border-cb-border">
-                                    <form method="POST" action="<?php echo e(route('logout')); ?>">
-                                        <?php echo csrf_field(); ?>
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                            <i class="fas fa-sign-out-alt mr-2"></i>
-                                            Cerrar Sesión
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            <a href="<?php echo e(route('profile.index')); ?>" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-xl">
+                                Ver Mi Perfil
+                            </a>
                         <?php else: ?>
-                            
                             <a href="<?php echo e(route('login')); ?>" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-xl">
                                 <i class="fas fa-sign-in-alt mr-2"></i>
                                 Iniciar Sesión
@@ -168,11 +76,9 @@
             </div>
         </header>
 
-        
         <main class="py-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 
-                
                 <section class="text-center pt-10 pb-16">
                     <p class="text-cb-green font-semibold mb-4 text-sm uppercase tracking-wider">
                         # Plataforma de Programación Competitiva
@@ -187,12 +93,10 @@
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
                         <?php if(auth()->guard()->check()): ?>
                             <a href="<?php echo e(route('profile.index')); ?>" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-3 px-8 rounded-lg text-lg transition duration-300 inline-flex items-center justify-center">
-                                <i class="fas fa-user mr-2"></i>
                                 Ver Mi Perfil →
                             </a>
                         <?php else: ?>
                             <a href="<?php echo e(route('login')); ?>" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-3 px-8 rounded-lg text-lg transition duration-300 inline-flex items-center justify-center">
-                                <i class="fas fa-sign-in-alt mr-2"></i>
                                 Comenzar Ahora →
                             </a>
                         <?php endif; ?>
@@ -202,137 +106,6 @@
                     </div>
                 </section>
 
-                
-                <section id="evento-destacado">
-                    <h2 class="text-center text-2xl font-bold mb-2 text-white">
-                        Próximo Evento Destacado
-                    </h2>
-                    <p class="text-center text-sm text-gray-400 mb-8">No te pierdas el concurso más esperado del mes</p>
-                    
-                    <div class="bg-cb-card border border-cb-green/50 shadow-2xl rounded-2xl p-8 max-w-4xl mx-auto" style="box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);">
-                        <div class="grid md:grid-cols-3 gap-8 items-center">
-                            <div class="md:col-span-2 space-y-4">
-                                <span class="inline-flex items-center space-x-2 text-sm font-semibold text-cb-green">
-                                    <i class="fas fa-trophy"></i>
-                                    <span>Premio: $<?php echo e($nextEvent->premio); ?></span>
-                                </span>
-                                <h3 class="text-3xl md:text-4xl font-extrabold text-white">
-                                    <?php echo e($nextEvent->name); ?>
-
-                                </h3>
-                                <p class="text-gray-400">
-                                    El torneo más grande del año está por comenzar. Compite contra los mejores programadores y demuestra tus habilidades en algoritmos avanzados y estructuras de datos.
-                                </p>
-                                <ul class="text-gray-400 text-sm space-y-2 pt-2">
-                                    <li class="flex items-center space-x-2">
-                                        <i class="far fa-calendar-alt text-cb-green"></i>
-                                        <span><?php echo e($nextEvent->fecha); ?></span>
-                                    </li>
-                                    <li class="flex items-center space-x-2">
-                                        <i class="far fa-clock text-cb-green"></i>
-                                        <span>Duración: <?php echo e($nextEvent->duracion); ?></span>
-                                    </li>
-                                    <li class="flex items-center space-x-2">
-                                        <i class="fas fa-users text-cb-green"></i>
-                                        <span><?php echo e($nextEvent->registrados); ?> participantes registrados</span>
-                                    </li>
-                                </ul>
-                                <?php if(auth()->guard()->check()): ?>
-                                    <a href="#" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 inline-flex items-center space-x-2 mt-4">
-                                        <span>Registrarse Ahora</span>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                <?php else: ?>
-                                    <a href="<?php echo e(route('login')); ?>" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 inline-flex items-center space-x-2 mt-4">
-                                        <span>Inicia Sesión para Registrarte</span>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="flex flex-col items-center space-y-4">
-                                <p class="text-sm text-gray-400">Comienza en</p>
-                                <div id="countdown-timer" class="grid grid-cols-4 gap-4 text-center text-white"></div>
-                                <p class="text-xs text-cb-green flex items-center space-x-2 pt-4">
-                                    <i class="fas fa-bolt"></i>
-                                    <span>Registro anticipado disponible</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                
-                <section id="concursos">
-                    <h2 class="text-3xl font-bold mb-2 text-white">Concursos Recientes</h2>
-                    <p class="text-gray-400 mb-8">Encuentra el desafío perfecto para ti</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <?php $__currentLoopData = $contests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $contest): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-cb-green/50 transition duration-300 transform hover:scale-[1.02]">
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                        <?php if($contest->status == 'Activo'): ?> bg-cb-green/20 text-cb-green border border-cb-green
-                                        <?php elseif($contest->status == 'Próximamente'): ?> bg-blue-900/40 text-blue-300 border border-blue-600
-                                        <?php else: ?> bg-gray-600/40 text-gray-300 border border-gray-500
-                                        <?php endif; ?>
-                                    ">
-                                        <?php echo e($contest->status); ?>
-
-                                    </span>
-                                    <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                        <?php if($contest->difficulty == 'Difícil'): ?> bg-red-900/40 text-red-300
-                                        <?php elseif($contest->difficulty == 'Medio'): ?> bg-yellow-900/40 text-yellow-300
-                                        <?php else: ?> bg-green-900/40 text-green-300
-                                        <?php endif; ?>
-                                    ">
-                                        <?php echo e($contest->difficulty); ?>
-
-                                    </span>
-                                </div>
-
-                                <h4 class="text-xl font-bold mb-2 text-white"><?php echo e($contest->name); ?></h4>
-                                <p class="text-gray-400 text-sm mb-4"><?php echo e($contest->description); ?></p>
-
-                                <div class="text-sm text-gray-400 space-y-2 border-t border-b border-cb-border py-3 my-3">
-                                    <p class="flex items-center space-x-2">
-                                        <i class="far fa-clock text-cb-green"></i>
-                                        <span><?php echo e($contest->duration); ?></span>
-                                    </p>
-                                    <p class="flex items-center space-x-2">
-                                        <i class="fas fa-user-friends text-cb-green"></i>
-                                        <span><?php echo e(number_format($contest->participants)); ?> participantes</span>
-                                    </p>
-                                    <p class="flex items-center space-x-2 text-cb-green font-bold">
-                                        <i class="fas fa-award"></i>
-                                        <span>Premio: $<?php echo e(number_format($contest->prize)); ?></span>
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <?php $__currentLoopData = $contest->languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <span class="text-xs bg-cb-border text-gray-300 px-2 py-1 rounded-full">
-                                            <?php echo e($lang); ?>
-
-                                        </span>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </div>
-
-                                <?php if(auth()->guard()->check()): ?>
-                                    <a href="<?php echo e(route('contests.show', $contest->id)); ?>" class="mt-4 block text-center bg-cb-green/10 hover:bg-cb-green/20 text-cb-green font-semibold py-2 px-4 rounded-lg transition duration-300">
-                                        Ver Detalles →
-                                    </a>
-                                <?php else: ?>
-                                    <a href="<?php echo e(route('login')); ?>" class="mt-4 block text-center bg-cb-green/10 hover:bg-cb-green/20 text-cb-green font-semibold py-2 px-4 rounded-lg transition duration-300">
-                                        Inicia Sesión para Ver →
-                                    </a>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </div>
-                </section>
-
-                
                 <section class="py-16">
                     <h2 class="text-3xl font-bold text-center mb-12 text-white">¿Por qué CodeBattle?</h2>
                     <div class="grid md:grid-cols-3 gap-8">
@@ -360,10 +133,129 @@
                     </div>
                 </section>
 
+                <section id="concursos" class="py-20">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-extrabold text-white mb-4">
+                            <i class="fas fa-trophy text-cb-green mr-3"></i>
+                            Concursos Disponibles
+                        </h2>
+                        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                            Elige tu desafío y demuestra tus habilidades de programación
+                        </p>
+                    </div>
+
+                    <?php if($contests->count() > 0): ?>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <?php $__currentLoopData = $contests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $contest): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="bg-cb-card rounded-xl shadow-2xl border border-cb-border hover:border-cb-green transition duration-300 overflow-hidden group">
+                                    <div class="bg-gradient-to-r from-cb-green/20 to-cb-dark p-6 border-b border-cb-border">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                                <?php if($contest->status == 'Activo'): ?> bg-cb-green/20 text-cb-green border border-cb-green
+                                                <?php else: ?> bg-blue-900/40 text-blue-300 border border-blue-600
+                                                <?php endif; ?>
+                                            ">
+                                                <?php echo e($contest->status); ?>
+
+                                            </span>
+                                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                                <?php if($contest->difficulty == 'Difícil'): ?> bg-red-900/40 text-red-300 border border-red-600
+                                                <?php elseif($contest->difficulty == 'Medio'): ?> bg-yellow-900/40 text-yellow-300 border border-yellow-600
+                                                <?php else: ?> bg-green-900/40 text-green-300 border border-green-600
+                                                <?php endif; ?>
+                                            ">
+                                                <?php echo e($contest->difficulty); ?>
+
+                                            </span>
+                                        </div>
+                                        <h3 class="text-2xl font-bold text-white group-hover:text-cb-green transition">
+                                            <?php echo e($contest->name); ?>
+
+                                        </h3>
+                                    </div>
+
+                                    <div class="p-6 space-y-4">
+                                        <p class="text-gray-400 text-sm line-clamp-2">
+                                            <?php echo e($contest->description); ?>
+
+                                        </p>
+
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-calendar text-cb-green"></i>
+                                                <span class="text-gray-400"><?php echo e($contest->start_date->format('d/m/Y')); ?></span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-clock text-cb-green"></i>
+                                                <span class="text-gray-400"><?php echo e($contest->duration); ?></span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-users text-cb-green"></i>
+                                                <span class="text-gray-400"><?php echo e($contest->participants); ?> personas</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-trophy text-cb-green"></i>
+                                                <span class="text-gray-400">$<?php echo e(number_format($contest->prize, 0)); ?></span>
+                                            </div>
+                                        </div>
+
+                                        <?php if($contest->languages && is_array($contest->languages) && count($contest->languages) > 0): ?>
+                                            <div class="flex flex-wrap gap-2">
+                                                <?php $__currentLoopData = array_slice($contest->languages, 0, 3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $language): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <span class="px-2 py-1 bg-cb-green/10 text-cb-green border border-cb-green/30 rounded text-xs font-medium">
+                                                        <?php echo e($language); ?>
+
+                                                    </span>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if(count($contest->languages) > 3): ?>
+                                                    <span class="px-2 py-1 bg-gray-700 text-gray-400 rounded text-xs">
+                                                        +<?php echo e(count($contest->languages) - 3); ?> más
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if(auth()->guard()->check()): ?>
+                                            <a href="<?php echo e(route('contests.show', $contest->id)); ?>" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
+                                                Ver Detalles
+                                                <i class="fas fa-arrow-right ml-2"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <a href="<?php echo e(route('login')); ?>" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
+                                                Inicia Sesión para Participar
+                                                <i class="fas fa-sign-in-alt ml-2"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-16">
+                            <div class="w-24 h-24 bg-cb-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-trophy text-cb-green text-4xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                No hay concursos disponibles en este momento
+                            </h3>
+                            <p class="text-gray-400 mb-8">
+                                Los nuevos desafíos se publicarán pronto. ¡Mantente atento!
+                            </p>
+                            <?php if(auth()->guard()->check()): ?>
+                                <?php if(Auth::user()->isAdmin()): ?>
+                                    <a href="<?php echo e(route('admin.contests.create')); ?>" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Crear Primer Concurso
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </section>
+
             </div>
         </main>
 
-        
         <footer class="mt-20 border-t border-cb-border bg-cb-card pt-10 pb-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -375,45 +267,29 @@
                         <p class="text-sm text-gray-400 mb-4">
                             La plataforma líder de programación competitiva en México y Latinoamérica.
                         </p>
-                        <div class="flex space-x-4 text-gray-400">
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-twitter text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-facebook text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-instagram text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-github text-xl"></i></a>
-                        </div>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Plataforma</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Cómo funciona</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Reglas y términos</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Preguntas frecuentes</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Documentación</a></li>
                         </ul>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Comunidad</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Discord</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Foro</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Tutoriales</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Embajadores</a></li>
                         </ul>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Compañía</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Acerca de</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Patrocinadores</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Trabaja con nosotros</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Contacto</a></li>
                         </ul>
                     </div>
                 </div>
-
                 <div class="mt-10 pt-6 border-t border-cb-border text-center text-sm text-gray-500">
                     <p>© 2025 CodeBattle. Todos los derechos reservados.</p>
                 </div>

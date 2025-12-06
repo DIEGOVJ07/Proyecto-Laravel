@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeamController;
 
 // Landing page (pública)
 Route::get('/', WelcomeController::class)->name('welcome');
@@ -53,6 +54,27 @@ Route::middleware('auth')->group(function () {
     // Clasificación (Leaderboard)
     Route::get('/clasificacion', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
+
+        // Rutas protegidas (usuarios autenticados)
+        Route::middleware('auth')->group(function () {
+            // ... rutas existentes ...
+            
+            // ==========================================
+            // GESTIÓN DE EQUIPOS
+            // ==========================================
+            // Buscar equipo por código
+            Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('teams.search');
+            
+            // Unirse a un equipo
+            Route::post('/equipos/{team}/unirse', [TeamController::class, 'join'])->name('teams.join');
+            
+            // Salir de un equipo
+            Route::delete('/equipos/{team}/salir', [TeamController::class, 'leave'])->name('teams.leave');
+            
+            // Ver equipos públicos de un concurso
+            Route::get('/concursos/{contest}/equipos-publicos', [TeamController::class, 'publicTeams'])->name('teams.public');
+        });
+
 
 // Rutas de administración (solo admin)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

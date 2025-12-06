@@ -72,6 +72,9 @@
                                 <div class="flex-1">
                                     <div class="flex items-center space-x-3 mb-3">
                                         <h4 class="text-xl font-bold text-white">{{ $registration->team_name }}</h4>
+                                        <span class="px-2 py-1 bg-purple-500/20 text-purple-400 border border-purple-500 rounded text-xs font-semibold">
+                                            {{ $registration->team_code }}
+                                        </span>
                                         @if($registration->status == 'qualified')
                                             <span class="px-3 py-1 bg-cb-green/20 text-cb-green border border-cb-green rounded-full text-xs font-semibold">
                                                 <i class="fas fa-check-circle mr-1"></i>
@@ -87,22 +90,22 @@
                                     <div class="grid md:grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <p class="text-gray-400 text-sm mb-2">
-                                                <i class="fas fa-user text-cb-green mr-2"></i>
-                                                Líder: <span class="text-white font-medium">{{ $registration->user->name }}</span>
+                                                <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                                                Líder: <span class="text-white font-medium">{{ $registration->teamLeader->name ?? $registration->user->name }}</span>
                                             </p>
                                             <p class="text-gray-400 text-sm mb-2">
                                                 <i class="fas fa-envelope text-cb-green mr-2"></i>
-                                                Email: <span class="text-white">{{ $registration->user->email }}</span>
-                                            </p>
-                                            <p class="text-gray-400 text-sm">
-                                                <i class="fas fa-phone text-cb-green mr-2"></i>
-                                                Teléfono: <span class="text-white">{{ $registration->leader_phone }}</span>
+                                                Email: <span class="text-white">{{ $registration->teamLeader->email ?? $registration->user->email }}</span>
                                             </p>
                                         </div>
                                         <div>
                                             <p class="text-gray-400 text-sm mb-2">
                                                 <i class="fas fa-users text-cb-green mr-2"></i>
-                                                Integrantes: <span class="text-white font-medium">{{ $registration->team_size }}</span>
+                                                Miembros: <span class="text-white font-medium">{{ $registration->current_members }}/{{ $registration->max_members }}</span>
+                                            </p>
+                                            <p class="text-gray-400 text-sm mb-2">
+                                                <i class="fas fa-globe text-cb-green mr-2"></i>
+                                                Visibilidad: <span class="text-white">{{ $registration->is_public ? 'Público' : 'Privado' }}</span>
                                             </p>
                                             <p class="text-gray-400 text-sm">
                                                 <i class="fas fa-calendar text-cb-green mr-2"></i>
@@ -111,27 +114,48 @@
                                         </div>
                                     </div>
 
-                                    {{-- Integrantes --}}
+                                    {{-- Miembros del Equipo --}}
                                     <div class="mt-4">
                                         <p class="text-gray-400 text-sm font-medium mb-3">
                                             <i class="fas fa-id-card text-cb-green mr-2"></i>
                                             Miembros del Equipo:
                                         </p>
                                         <div class="grid md:grid-cols-2 gap-3">
-                                            @foreach($registration->team_members as $index => $member)
+                                            {{-- Líder del equipo --}}
+                                            <div class="flex items-center space-x-3 bg-cb-dark/50 p-3 rounded-lg border border-yellow-500/30">
+                                                <div class="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-crown text-yellow-500 text-xs"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="text-white font-medium text-sm">{{ $registration->teamLeader->name ?? $registration->user->name }}</p>
+                                                    <p class="text-gray-400 text-xs">Líder del Equipo</p>
+                                                </div>
+                                            </div>
+
+                                            {{-- Miembros adicionales --}}
+                                            @foreach($registration->members as $teamMember)
                                                 <div class="flex items-center space-x-3 bg-cb-dark/50 p-3 rounded-lg">
                                                     <div class="w-8 h-8 bg-cb-green/10 rounded-full flex items-center justify-center">
-                                                        <span class="text-cb-green font-bold text-sm">{{ $index + 1 }}</span>
+                                                        <span class="text-cb-green font-bold text-sm">{{ $loop->iteration + 1 }}</span>
                                                     </div>
                                                     <div class="flex-1">
-                                                        <p class="text-white font-medium text-sm">{{ $member['name'] }}</p>
-                                                        <p class="text-gray-400 text-xs">
-                                                            Nac: {{ \Carbon\Carbon::parse($member['birthdate'])->format('d/m/Y') }}
-                                                            ({{ \Carbon\Carbon::parse($member['birthdate'])->age }} años)
-                                                        </p>
+                                                        <p class="text-white font-medium text-sm">{{ $teamMember->user->name }}</p>
+                                                        <p class="text-gray-400 text-xs">{{ $teamMember->user->email }}</p>
                                                     </div>
                                                 </div>
                                             @endforeach
+
+                                            {{-- Espacios vacíos --}}
+                                            @for($i = $registration->current_members; $i < $registration->max_members; $i++)
+                                                <div class="flex items-center space-x-3 bg-cb-dark/30 p-3 rounded-lg border border-dashed border-cb-border">
+                                                    <div class="w-8 h-8 bg-gray-600/20 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user-plus text-gray-600 text-xs"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="text-gray-500 text-sm">Espacio disponible</p>
+                                                    </div>
+                                                </div>
+                                            @endfor
                                         </div>
                                     </div>
                                 </div>

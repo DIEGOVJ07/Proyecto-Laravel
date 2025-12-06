@@ -3,9 +3,9 @@
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-2xl text-white leading-tight">
                 <i class="fas fa-trophy text-cb-green mr-2"></i>
-                Detalles del Concurso
+                {{ $contest->name }}
             </h2>
-            <a href="{{ route('welcome') }}" class="text-gray-400 hover:text-white transition">
+            <a href="{{ route('welcome') }}#concursos" class="px-4 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -15,7 +15,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Mensajes de éxito/error --}}
+            {{-- Mensajes --}}
             @if(session('success'))
                 <div class="bg-green-500/10 border border-green-500 text-green-400 px-4 py-3 rounded-lg">
                     <i class="fas fa-check-circle mr-2"></i>
@@ -30,358 +30,197 @@
                 </div>
             @endif
 
-            {{-- Información Principal del Concurso --}}
-            <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    {{-- Columna Izquierda --}}
+            {{-- Información del Concurso --}}
+            <div class="bg-gradient-to-r from-cb-green/10 to-cb-card border border-cb-green/30 rounded-xl shadow-xl p-8">
+                <div class="flex items-start justify-between mb-6">
                     <div class="flex-1">
-                        <div class="flex items-center gap-4 mb-6">
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                @if ($contest->status == 'Activo') bg-cb-green/20 text-cb-green border border-cb-green
-                                @elseif ($contest->status == 'Próximamente') bg-blue-900/40 text-blue-300 border border-blue-600
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                @if($contest->status == 'Activo') bg-cb-green/20 text-cb-green border border-cb-green
+                                @elseif($contest->status == 'Próximamente') bg-blue-900/40 text-blue-300 border border-blue-600
                                 @else bg-gray-600/40 text-gray-300 border border-gray-500
                                 @endif
                             ">
                                 {{ $contest->status }}
                             </span>
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                @if ($contest->difficulty == 'Difícil') bg-red-900/40 text-red-300
-                                @elseif ($contest->difficulty == 'Medio') bg-yellow-900/40 text-yellow-300
-                                @else bg-green-900/40 text-green-300
+                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                @if($contest->difficulty == 'Difícil') bg-red-900/40 text-red-300 border border-red-600
+                                @elseif($contest->difficulty == 'Medio') bg-yellow-900/40 text-yellow-300 border border-yellow-600
+                                @else bg-green-900/40 text-green-300 border border-green-600
                                 @endif
                             ">
                                 {{ $contest->difficulty }}
                             </span>
                         </div>
-
                         <h1 class="text-4xl font-bold text-white mb-4">{{ $contest->name }}</h1>
-                        <p class="text-gray-400 text-lg mb-6">{{ $contest->description }}</p>
-
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-cb-dark/50 p-4 rounded-lg">
-                                <div class="flex items-center space-x-2 text-cb-green mb-2">
-                                    <i class="far fa-clock"></i>
-                                    <span class="text-sm font-medium">Duración</span>
-                                </div>
-                                <p class="text-white font-bold">{{ $contest->duration }}</p>
-                            </div>
-
-                            <div class="bg-cb-dark/50 p-4 rounded-lg">
-                                <div class="flex items-center space-x-2 text-cb-green mb-2">
-                                    <i class="fas fa-users"></i>
-                                    <span class="text-sm font-medium">Participantes</span>
-                                </div>
-                                <p class="text-white font-bold">{{ number_format($contest->participants) }}</p>
-                            </div>
-
-                            <div class="bg-cb-dark/50 p-4 rounded-lg">
-                                <div class="flex items-center space-x-2 text-cb-green mb-2">
-                                    <i class="fas fa-trophy"></i>
-                                    <span class="text-sm font-medium">Premio</span>
-                                </div>
-                                <p class="text-white font-bold">${{ number_format($contest->prize) }}</p>
-                            </div>
-
-                            <div class="bg-cb-dark/50 p-4 rounded-lg">
-                                <div class="flex items-center space-x-2 text-cb-green mb-2">
-                                    <i class="far fa-calendar"></i>
-                                    <span class="text-sm font-medium">Fecha</span>
-                                </div>
-                                <p class="text-white font-bold">{{ $contest->start_date->format('d M Y') }}</p>
-                            </div>
-                        </div>
-
-                        <div class="mb-6">
-                            <h3 class="text-lg font-bold text-white mb-3">
-                                <i class="fas fa-code text-cb-green mr-2"></i>
-                                Lenguajes Permitidos
-                            </h3>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($contest->languages as $lang)
-                                    <span class="text-sm bg-cb-border text-gray-300 px-3 py-1 rounded-full">
-                                        {{ $lang }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
+                        <p class="text-gray-300 text-lg mb-6">{{ $contest->description }}</p>
                     </div>
+                </div>
 
-                    {{-- Columna Derecha - Equipo --}}
-                    <div class="lg:w-96">
-                        <div class="bg-cb-dark/50 rounded-lg p-6 border border-cb-border">
-                            <h3 class="text-lg font-bold text-white mb-4">
-                                <i class="fas fa-user-friends text-cb-green mr-2"></i>
-                                Configuración de Equipo
-                            </h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Mínimo de integrantes:</span>
-                                    <span class="text-white font-bold">{{ $contest->min_team_members }}</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Máximo de integrantes:</span>
-                                    <span class="text-white font-bold">{{ $contest->max_team_members }}</span>
-                                </div>
-                            </div>
-
-                            @if($isRegistered)
-                                <div class="mt-6 p-4 bg-green-500/10 border border-green-500 rounded-lg">
-                                    <div class="flex items-center space-x-2 text-green-400 mb-2">
-                                        <i class="fas fa-check-circle"></i>
-                                        <span class="font-bold">Ya estás registrado</span>
-                                    </div>
-                                    <p class="text-sm text-gray-400">Equipo: {{ $registration->team_name }}</p>
-                                </div>
-                            @else
-                                <button 
-                                    onclick="document.getElementById('registration-form').scrollIntoView({ behavior: 'smooth' })"
-                                    class="w-full mt-6 py-3 bg-cb-green hover:bg-green-600 text-cb-dark font-bold rounded-lg transition duration-300"
-                                >
-                                    <i class="fas fa-user-plus mr-2"></i>
-                                    Participar Ahora
-                                </button>
-                            @endif
-                        </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-cb-dark/50 p-4 rounded-lg">
+                        <i class="fas fa-calendar text-cb-green text-2xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Fecha de Inicio</p>
+                        <p class="text-white font-bold">{{ $contest->start_date->format('d M Y') }}</p>
+                    </div>
+                    <div class="bg-cb-dark/50 p-4 rounded-lg">
+                        <i class="fas fa-clock text-cb-green text-2xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Duración</p>
+                        <p class="text-white font-bold">{{ $contest->duration }}</p>
+                    </div>
+                    <div class="bg-cb-dark/50 p-4 rounded-lg">
+                        <i class="fas fa-users text-cb-green text-2xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Participantes</p>
+                        <p class="text-white font-bold">{{ $contest->participants }} personas</p>
+                    </div>
+                    <div class="bg-cb-dark/50 p-4 rounded-lg">
+                        <i class="fas fa-trophy text-cb-green text-2xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Premio</p>
+                        <p class="text-white font-bold">${{ number_format($contest->prize, 0) }}</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Reglas y Requisitos --}}
-            <div class="grid lg:grid-cols-2 gap-6">
+            {{-- Lenguajes Soportados --}}
+            @if($contest->languages && is_array($contest->languages) && count($contest->languages) > 0)
                 <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-6">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-                        <i class="fas fa-list-check text-cb-green mr-3"></i>
-                        Reglas del Concurso
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-code text-cb-green mr-2"></i>
+                        Lenguajes Soportados
                     </h3>
-                    <p class="text-gray-400">{{ $contest->rules ?? 'No hay reglas específicas publicadas aún.' }}</p>
-                </div>
-
-                <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-6">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-                        <i class="fas fa-clipboard-list text-cb-green mr-3"></i>
-                        Requisitos
-                    </h3>
-                    <p class="text-gray-400">{{ $contest->requirements ?? 'No hay requisitos específicos.' }}</p>
-                </div>
-            </div>
-
-            {{-- Formulario de Registro --}}
-            @if(!$isRegistered)
-                <div id="registration-form" class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
-                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                        <i class="fas fa-edit text-cb-green mr-3"></i>
-                        Formulario de Inscripción
-                    </h3>
-
-                    <form method="POST" action="{{ route('contests.register', $contest->id) }}" id="contest-form">
-                        @csrf
-
-                        {{-- Nombre del Equipo --}}
-                        <div class="mb-6">
-                            <label for="team_name" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-users mr-2"></i>
-                                Nombre del Equipo *
-                            </label>
-                            <input 
-                                type="text" 
-                                id="team_name" 
-                                name="team_name" 
-                                required
-                                class="w-full px-4 py-3 bg-cb-dark border border-cb-border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cb-green focus:border-transparent"
-                                placeholder="Ej: Los Coders"
-                            >
-                            @error('team_name')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Cantidad de Integrantes --}}
-                        <div class="mb-6">
-                            <label for="team_size" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-hashtag mr-2"></i>
-                                Cantidad de Integrantes ({{ $contest->min_team_members }} - {{ $contest->max_team_members }}) *
-                            </label>
-                            <input 
-                                type="number" 
-                                id="team_size" 
-                                name="team_size" 
-                                min="{{ $contest->min_team_members }}" 
-                                max="{{ $contest->max_team_members }}" 
-                                required
-                                onchange="updateMemberFields()"
-                                class="w-full px-4 py-3 bg-cb-dark border border-cb-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cb-green focus:border-transparent"
-                            >
-                            @error('team_size')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Teléfono del Líder --}}
-                        <div class="mb-6">
-                            <label for="leader_phone" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-phone mr-2"></i>
-                                Teléfono del Líder *
-                            </label>
-                            <input 
-                                type="tel" 
-                                id="leader_phone" 
-                                name="leader_phone" 
-                                required
-                                class="w-full px-4 py-3 bg-cb-dark border border-cb-border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cb-green focus:border-transparent"
-                                placeholder="Ej: +52 123 456 7890"
-                            >
-                            <p class="text-gray-500 text-xs mt-1">El líder será el contacto principal del equipo</p>
-                            @error('leader_phone')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Integrantes del Equipo --}}
-                        <div class="mb-6">
-                            <h4 class="text-lg font-bold text-white mb-4">
-                                <i class="fas fa-id-card text-cb-green mr-2"></i>
-                                Datos de los Integrantes
-                            </h4>
-                            <div id="members-container" class="space-y-4">
-                                <!-- Los campos se generarán dinámicamente con JavaScript -->
-                            </div>
-                        </div>
-
-                        {{-- Botones --}}
-                        <div class="flex gap-4">
-                            <button 
-                                type="submit"
-                                class="flex-1 py-3 bg-cb-green hover:bg-green-600 text-cb-dark font-bold rounded-lg transition duration-300"
-                            >
-                                <i class="fas fa-check mr-2"></i>
-                                Confirmar Inscripción
-                            </button>
-                            <a 
-                                href="{{ route('welcome') }}"
-                                class="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition duration-300 text-center"
-                            >
-                                <i class="fas fa-times mr-2"></i>
-                                Cancelar
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            @else
-                {{-- Opciones si ya está registrado --}}
-                <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
-                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                        <i class="fas fa-info-circle text-cb-green mr-3"></i>
-                        Información de tu Registro
-                    </h3>
-
-                    <div class="bg-cb-dark/50 rounded-lg p-6 mb-6">
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <p class="text-gray-400 text-sm mb-1">Nombre del Equipo</p>
-                                <p class="text-white font-bold">{{ $registration->team_name }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-sm mb-1">Integrantes</p>
-                                <p class="text-white font-bold">{{ $registration->team_size }} miembros</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-sm mb-1">Teléfono del Líder</p>
-                                <p class="text-white font-bold">{{ $registration->leader_phone }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-sm mb-1">Estado</p>
-                                <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-lg text-sm font-medium">
-                                    Registrado
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            <p class="text-gray-400 text-sm mb-3">Miembros del Equipo:</p>
-                            <div class="space-y-2">
-                                @foreach($registration->team_members as $index => $member)
-                                    <div class="flex items-center space-x-3 bg-cb-card p-3 rounded-lg">
-                                        <div class="w-10 h-10 bg-cb-green/10 rounded-full flex items-center justify-center">
-                                            <span class="text-cb-green font-bold">{{ $index + 1 }}</span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-white font-medium">{{ $member['name'] }}</p>
-                                            <p class="text-gray-400 text-sm">Nacimiento: {{ \Carbon\Carbon::parse($member['birthdate'])->format('d/m/Y') }}</p>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+                    <div class="flex flex-wrap gap-3">
+                        @foreach($contest->languages as $language)
+                            <span class="px-4 py-2 bg-cb-green/10 text-cb-green border border-cb-green/30 rounded-lg font-medium">
+                                {{ $language }}
+                            </span>
+                        @endforeach
                     </div>
-
-                    <form method="POST" action="{{ route('contests.cancel', $contest->id) }}" onsubmit="return confirm('¿Estás seguro de que quieres cancelar tu inscripción?')">
-                        @csrf
-                        @method('DELETE')
-                        <button 
-                            type="submit"
-                            class="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500 font-bold rounded-lg transition duration-300"
-                        >
-                            <i class="fas fa-trash mr-2"></i>
-                            Cancelar Inscripción
-                        </button>
-                    </form>
                 </div>
             @endif
 
+            {{-- Botones de Acción Rápida --}}
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="{{ route('teams.public', $contest->id) }}" class="bg-cb-card border-2 border-cb-border hover:border-cb-green rounded-xl p-6 transition group text-center">
+                    <i class="fas fa-globe text-4xl text-cb-green mb-3"></i>
+                    <h4 class="text-white font-bold mb-2">Ver Equipos Públicos</h4>
+                    <p class="text-gray-400 text-sm">Únete a un equipo existente</p>
+                </a>
+
+                <div class="bg-cb-card border-2 border-cb-border hover:border-cb-green rounded-xl p-6 transition group text-center cursor-pointer" onclick="document.getElementById('buscar-equipo').scrollIntoView({behavior: 'smooth'})">
+                    <i class="fas fa-search text-4xl text-cb-green mb-3"></i>
+                    <h4 class="text-white font-bold mb-2">Buscar por Código</h4>
+                    <p class="text-gray-400 text-sm">Tengo un código de equipo</p>
+                </div>
+
+                <div class="bg-cb-card border-2 border-cb-border hover:border-cb-green rounded-xl p-6 transition group text-center cursor-pointer" onclick="document.getElementById('registrar-equipo').scrollIntoView({behavior: 'smooth'})">
+                    <i class="fas fa-plus-circle text-4xl text-cb-green mb-3"></i>
+                    <h4 class="text-white font-bold mb-2">Crear Equipo Nuevo</h4>
+                    <p class="text-gray-400 text-sm">Sé el líder de tu equipo</p>
+                </div>
+            </div>
+
+            {{-- Buscar Equipo por Código --}}
+            <div id="buscar-equipo" class="bg-gradient-to-r from-cb-green/10 to-cb-card border border-cb-green/30 rounded-xl shadow-xl p-8">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-cb-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-3xl text-cb-green"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">¿Te Invitaron a un Equipo?</h3>
+                    <p class="text-gray-400">Ingresa el código de 5 dígitos que te compartieron</p>
+                </div>
+
+                <form method="POST" action="{{ route('teams.search') }}" class="max-w-md mx-auto">
+                    @csrf
+                    <div class="flex gap-3">
+                        <input type="text" 
+                               name="team_code" 
+                               maxlength="5" 
+                               required
+                               placeholder="Ej: A1B2C"
+                               class="flex-1 bg-cb-dark border border-cb-border rounded-lg px-6 py-3 text-white text-center text-xl font-bold uppercase tracking-widest focus:border-cb-green focus:ring focus:ring-cb-green/20 transition">
+                        <button type="submit" class="px-8 py-3 bg-cb-green hover:bg-green-600 text-cb-dark font-bold rounded-lg transition">
+                            <i class="fas fa-search mr-2"></i>
+                            Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Formulario de Registro --}}
+            <div id="registrar-equipo" class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-user-plus text-cb-green mr-2"></i>
+                    Crear y Registrar Equipo
+                </h3>
+
+                <form method="POST" action="{{ route('contests.register', $contest->id) }}" class="space-y-6">
+                    @csrf
+
+                    {{-- Nombre del Equipo --}}
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-2">Nombre del Equipo *</label>
+                        <input type="text" name="team_name" required
+                            class="w-full bg-cb-dark border border-cb-border rounded-lg px-4 py-3 text-white focus:border-cb-green focus:ring focus:ring-cb-green/20 transition"
+                            placeholder="Ej: Los Programadores">
+                        @error('team_name')
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Tamaño del Equipo --}}
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-2">Máximo de Miembros *</label>
+                        <select name="max_members" required
+                            class="w-full bg-cb-dark border border-cb-border rounded-lg px-4 py-3 text-white focus:border-cb-green focus:ring focus:ring-cb-green/20 transition">
+                            <option value="1">Solo yo (Individual)</option>
+                            <option value="2">2 miembros</option>
+                            <option value="3">3 miembros</option>
+                            <option value="4">4 miembros</option>
+                            <option value="5" selected>5 miembros</option>
+                            <option value="6">6 miembros</option>
+                            <option value="7">7 miembros</option>
+                            <option value="8">8 miembros</option>
+                            <option value="9">9 miembros</option>
+                            <option value="10">10 miembros</option>
+                        </select>
+                        @error('max_members')
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Equipo Público/Privado --}}
+                    <div>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" name="is_public" value="1"
+                                class="w-5 h-5 bg-cb-dark border-cb-border rounded text-cb-green focus:ring-cb-green focus:ring-offset-cb-card">
+                            <div>
+                                <span class="text-white font-medium">Equipo Público</span>
+                                <p class="text-gray-400 text-sm">Cualquiera puede ver y unirse a tu equipo</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    {{-- Información --}}
+                    <div class="bg-blue-500/10 border border-blue-500 rounded-lg p-4">
+                        <h4 class="text-blue-400 font-bold mb-2 flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Sobre el Código de Equipo
+                        </h4>
+                        <ul class="space-y-1 text-gray-300 text-sm">
+                            <li>• Se generará un código único de 5 dígitos para tu equipo</li>
+                            <li>• Comparte este código con tus compañeros para que se unan</li>
+                            <li>• El código es sensible a mayúsculas y minúsculas</li>
+                        </ul>
+                    </div>
+
+                    {{-- Botón de Registro --}}
+                    <button type="submit" class="w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-6 rounded-lg transition text-lg">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Crear Equipo y Registrarse
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
-
-    @push('scripts')
-    <script>
-        function updateMemberFields() {
-            const teamSize = parseInt(document.getElementById('team_size').value);
-            const container = document.getElementById('members-container');
-            
-            if (!teamSize || teamSize < {{ $contest->min_team_members }} || teamSize > {{ $contest->max_team_members }}) {
-                container.innerHTML = '<p class="text-gray-400">Por favor, ingresa una cantidad válida de integrantes.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            for (let i = 0; i < teamSize; i++) {
-                const memberDiv = document.createElement('div');
-                memberDiv.className = 'bg-cb-dark/50 rounded-lg p-4 border border-cb-border';
-                memberDiv.innerHTML = `
-                    <h5 class="text-white font-bold mb-3">
-                        <i class="fas fa-user text-cb-green mr-2"></i>
-                        Integrante ${i + 1} ${i === 0 ? '(Líder)' : ''}
-                    </h5>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Nombre Completo *
-                            </label>
-                            <input 
-                                type="text" 
-                                name="members[${i}][name]" 
-                                required
-                                class="w-full px-4 py-2 bg-cb-card border border-cb-border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cb-green"
-                                placeholder="Juan Pérez"
-                            >
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Fecha de Nacimiento *
-                            </label>
-                            <input 
-                                type="date" 
-                                name="members[${i}][birthdate]" 
-                                required
-                                max="${new Date().toISOString().split('T')[0]}"
-                                class="w-full px-4 py-2 bg-cb-card border border-cb-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cb-green"
-                            >
-                        </div>
-                    </div>
-                `;
-                container.appendChild(memberDiv);
-            }
-        }
-    </script>
-    @endpush
 </x-app-layout>

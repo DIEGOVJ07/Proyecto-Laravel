@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CodeBattle - Plataforma de Programación Competitiva</title>
     
-    {{-- Tailwind CSS desde CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,69 +21,15 @@
         }
     </script>
 
-    {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    {{-- Script del Contador --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const targetTimeElement = document.getElementById('countdown-timer');
-            if (!targetTimeElement) return;
-
-            const targetTime = {{ $nextEvent->countdown_target }} * 1000;
-            const timer = targetTimeElement;
-            const interval = setInterval(updateCountdown, 1000);
-
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = targetTime - now;
-
-                if (distance < 0) {
-                    clearInterval(interval);
-                    timer.innerHTML = "<span class='col-span-4 text-sm font-semibold'>¡El evento ha comenzado!</span>";
-                    return;
-                }
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                const formatTime = (time) => String(time).padStart(2, '0');
-
-                timer.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(days)}</span>
-                        <span class="text-sm">Días</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(hours)}</span>
-                        <span class="text-sm">Horas</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(minutes)}</span>
-                        <span class="text-sm">Min</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-bold">${formatTime(seconds)}</span>
-                        <span class="text-sm">Seg</span>
-                    </div>
-                `;
-            }
-
-            updateCountdown();
-        });
-    </script>
 </head>
 
 <body class="font-sans antialiased bg-cb-dark text-white">
     <div class="min-h-screen">
 
-        {{-- Navbar con autenticación --}}
         <header class="sticky top-0 z-50 bg-cb-card shadow-lg border-b border-cb-border">
             <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
-                    {{-- Logo --}}
                     <div class="flex items-center">
                         <a href="{{ route('welcome') }}" class="text-2xl font-extrabold text-cb-green flex items-center space-x-2">
                             <i class="fas fa-terminal"></i>
@@ -92,72 +37,35 @@
                         </a>
                     </div>
 
-                    {{-- Enlaces de navegación (solo si está autenticado) --}}
                     <nav class="hidden sm:flex sm:space-x-8">
-                        <a href="{{ route('welcome') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('welcome') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green' }} text-sm font-medium transition">
-                            <i class="fas fa-home mr-2"></i>
+                        <a href="{{ route('welcome') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('welcome') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                             Inicio
                         </a>
-                        
+                        <a href="#concursos" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-300 hover:text-white hover:border-cb-green transition duration-150">
+                            Concursos
+                        </a>
                         @auth
-                            <a href="#concursos" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-300 hover:text-white hover:border-cb-green transition text-sm font-medium">
-                                <i class="fas fa-trophy mr-2"></i>
-                                Concursos
-                            </a>
-                            {{-- SOLO ADMIN: Clasificación --}}
-                            <a href="{{ route('leaderboard.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-300 hover:text-white hover:border-cb-green transition text-sm font-medium">
-                                <i class="fas fa-chart-bar mr-2"></i>
+                            <a href="{{ route('leaderboard.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('leaderboard.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Clasificación
                             </a>
-                            <a href="{{ route('profile.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('profile.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green' }} text-sm font-medium transition">
-                                <i class="fas fa-user mr-2"></i>
+                            <a href="{{ route('profile.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('profile.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Mi Perfil
                             </a>
-                            <a href="{{ route('blog.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green' }} text-sm font-medium transition duration-150">
-                            <i class="fas fa-blog mr-2"></i>
+                            <a href="{{ route('blog.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Blog
-                                    </a>
-                            <{{-- Sedes - Visible para autenticados --}}
-                            <a href="{{ route('venues.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('venues.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-cb-green' }} transition text-sm font-medium">
-                              <i class="fas fa-map-marker-alt mr-2"></i>
-                              Sedes
-                                </a>
-
+                            </a>
+                            <a href="{{ route('venues.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('venues.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
+                                Sedes
+                            </a>
                         @endauth
                     </nav>
 
-                    {{-- Botón de acción (Login o Perfil según autenticación) --}}
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
                         @auth
-                            {{-- Usuario autenticado - Mostrar nombre y dropdown --}}
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 text-gray-300 hover:text-white transition">
-                                    <span class="font-medium">{{ Auth::user()->name }}</span>
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </button>
-                                
-                                {{-- Dropdown menu --}}
-                                <div class="absolute right-0 mt-2 w-48 bg-cb-card border border-cb-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                    <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                        <i class="fas fa-user mr-2"></i>
-                                        Mi Perfil
-                                    </a>
-                                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                        <i class="fas fa-cog mr-2"></i>
-                                        Configuración
-                                    </a>
-                                    <hr class="border-cb-border">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-cb-dark hover:text-white transition">
-                                            <i class="fas fa-sign-out-alt mr-2"></i>
-                                            Cerrar Sesión
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            <a href="{{ route('profile.index') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-xl">
+                                Ver Mi Perfil
+                            </a>
                         @else
-                            {{-- Usuario no autenticado - Mostrar botón de login --}}
                             <a href="{{ route('login') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 shadow-xl">
                                 <i class="fas fa-sign-in-alt mr-2"></i>
                                 Iniciar Sesión
@@ -168,11 +76,9 @@
             </div>
         </header>
 
-        {{-- Contenido Principal --}}
         <main class="py-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 
-                {{-- Hero Section --}}
                 <section class="text-center pt-10 pb-16">
                     <p class="text-cb-green font-semibold mb-4 text-sm uppercase tracking-wider">
                         # Plataforma de Programación Competitiva
@@ -187,12 +93,10 @@
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
                         @auth
                             <a href="{{ route('profile.index') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-3 px-8 rounded-lg text-lg transition duration-300 inline-flex items-center justify-center">
-                                <i class="fas fa-user mr-2"></i>
                                 Ver Mi Perfil →
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-3 px-8 rounded-lg text-lg transition duration-300 inline-flex items-center justify-center">
-                                <i class="fas fa-sign-in-alt mr-2"></i>
                                 Comenzar Ahora →
                             </a>
                         @endauth
@@ -202,133 +106,6 @@
                     </div>
                 </section>
 
-                {{-- Próximo Evento --}}
-                <section id="evento-destacado">
-                    <h2 class="text-center text-2xl font-bold mb-2 text-white">
-                        Próximo Evento Destacado
-                    </h2>
-                    <p class="text-center text-sm text-gray-400 mb-8">No te pierdas el concurso más esperado del mes</p>
-                    
-                    <div class="bg-cb-card border border-cb-green/50 shadow-2xl rounded-2xl p-8 max-w-4xl mx-auto" style="box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);">
-                        <div class="grid md:grid-cols-3 gap-8 items-center">
-                            <div class="md:col-span-2 space-y-4">
-                                <span class="inline-flex items-center space-x-2 text-sm font-semibold text-cb-green">
-                                    <i class="fas fa-trophy"></i>
-                                    <span>Premio: ${{ $nextEvent->premio }}</span>
-                                </span>
-                                <h3 class="text-3xl md:text-4xl font-extrabold text-white">
-                                    {{ $nextEvent->name }}
-                                </h3>
-                                <p class="text-gray-400">
-                                    El torneo más grande del año está por comenzar. Compite contra los mejores programadores y demuestra tus habilidades en algoritmos avanzados y estructuras de datos.
-                                </p>
-                                <ul class="text-gray-400 text-sm space-y-2 pt-2">
-                                    <li class="flex items-center space-x-2">
-                                        <i class="far fa-calendar-alt text-cb-green"></i>
-                                        <span>{{ $nextEvent->fecha }}</span>
-                                    </li>
-                                    <li class="flex items-center space-x-2">
-                                        <i class="far fa-clock text-cb-green"></i>
-                                        <span>Duración: {{ $nextEvent->duracion }}</span>
-                                    </li>
-                                    <li class="flex items-center space-x-2">
-                                        <i class="fas fa-users text-cb-green"></i>
-                                        <span>{{ $nextEvent->registrados }} participantes registrados</span>
-                                    </li>
-                                </ul>
-                                @auth
-                                    <a href="#" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 inline-flex items-center space-x-2 mt-4">
-                                        <span>Registrarse Ahora</span>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                @else
-                                    <a href="{{ route('login') }}" class="bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-6 rounded-lg transition duration-300 inline-flex items-center space-x-2 mt-4">
-                                        <span>Inicia Sesión para Registrarte</span>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                @endauth
-                            </div>
-
-                            <div class="flex flex-col items-center space-y-4">
-                                <p class="text-sm text-gray-400">Comienza en</p>
-                                <div id="countdown-timer" class="grid grid-cols-4 gap-4 text-center text-white"></div>
-                                <p class="text-xs text-cb-green flex items-center space-x-2 pt-4">
-                                    <i class="fas fa-bolt"></i>
-                                    <span>Registro anticipado disponible</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {{-- Concursos --}}
-                <section id="concursos">
-                    <h2 class="text-3xl font-bold mb-2 text-white">Concursos Recientes</h2>
-                    <p class="text-gray-400 mb-8">Encuentra el desafío perfecto para ti</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach ($contests as $contest)
-                            <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-cb-green/50 transition duration-300 transform hover:scale-[1.02]">
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                        @if ($contest->status == 'Activo') bg-cb-green/20 text-cb-green border border-cb-green
-                                        @elseif ($contest->status == 'Próximamente') bg-blue-900/40 text-blue-300 border border-blue-600
-                                        @else bg-gray-600/40 text-gray-300 border border-gray-500
-                                        @endif
-                                    ">
-                                        {{ $contest->status }}
-                                    </span>
-                                    <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                        @if ($contest->difficulty == 'Difícil') bg-red-900/40 text-red-300
-                                        @elseif ($contest->difficulty == 'Medio') bg-yellow-900/40 text-yellow-300
-                                        @else bg-green-900/40 text-green-300
-                                        @endif
-                                    ">
-                                        {{ $contest->difficulty }}
-                                    </span>
-                                </div>
-
-                                <h4 class="text-xl font-bold mb-2 text-white">{{ $contest->name }}</h4>
-                                <p class="text-gray-400 text-sm mb-4">{{ $contest->description }}</p>
-
-                                <div class="text-sm text-gray-400 space-y-2 border-t border-b border-cb-border py-3 my-3">
-                                    <p class="flex items-center space-x-2">
-                                        <i class="far fa-clock text-cb-green"></i>
-                                        <span>{{ $contest->duration }}</span>
-                                    </p>
-                                    <p class="flex items-center space-x-2">
-                                        <i class="fas fa-user-friends text-cb-green"></i>
-                                        <span>{{ number_format($contest->participants) }} participantes</span>
-                                    </p>
-                                    <p class="flex items-center space-x-2 text-cb-green font-bold">
-                                        <i class="fas fa-award"></i>
-                                        <span>Premio: ${{ number_format($contest->prize) }}</span>
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach ($contest->languages as $lang)
-                                        <span class="text-xs bg-cb-border text-gray-300 px-2 py-1 rounded-full">
-                                            {{ $lang }}
-                                        </span>
-                                    @endforeach
-                                </div>
-
-                                @auth
-                                    <a href="{{ route('contests.show', $contest->id) }}" class="mt-4 block text-center bg-cb-green/10 hover:bg-cb-green/20 text-cb-green font-semibold py-2 px-4 rounded-lg transition duration-300">
-                                        Ver Detalles →
-                                    </a>
-                                @else
-                                    <a href="{{ route('login') }}" class="mt-4 block text-center bg-cb-green/10 hover:bg-cb-green/20 text-cb-green font-semibold py-2 px-4 rounded-lg transition duration-300">
-                                        Inicia Sesión para Ver →
-                                    </a>
-                                @endauth
-                            </div>
-                        @endforeach
-                    </div>
-                </section>
-
-                {{-- Características --}}
                 <section class="py-16">
                     <h2 class="text-3xl font-bold text-center mb-12 text-white">¿Por qué CodeBattle?</h2>
                     <div class="grid md:grid-cols-3 gap-8">
@@ -356,10 +133,124 @@
                     </div>
                 </section>
 
+                <section id="concursos" class="py-20">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-extrabold text-white mb-4">
+                            <i class="fas fa-trophy text-cb-green mr-3"></i>
+                            Concursos Disponibles
+                        </h2>
+                        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                            Elige tu desafío y demuestra tus habilidades de programación
+                        </p>
+                    </div>
+
+                    @if($contests->count() > 0)
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach($contests as $contest)
+                                <div class="bg-cb-card rounded-xl shadow-2xl border border-cb-border hover:border-cb-green transition duration-300 overflow-hidden group">
+                                    <div class="bg-gradient-to-r from-cb-green/20 to-cb-dark p-6 border-b border-cb-border">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                                @if($contest->status == 'Activo') bg-cb-green/20 text-cb-green border border-cb-green
+                                                @else bg-blue-900/40 text-blue-300 border border-blue-600
+                                                @endif
+                                            ">
+                                                {{ $contest->status }}
+                                            </span>
+                                            <span class="px-3 py-1 text-xs font-bold rounded-full
+                                                @if($contest->difficulty == 'Difícil') bg-red-900/40 text-red-300 border border-red-600
+                                                @elseif($contest->difficulty == 'Medio') bg-yellow-900/40 text-yellow-300 border border-yellow-600
+                                                @else bg-green-900/40 text-green-300 border border-green-600
+                                                @endif
+                                            ">
+                                                {{ $contest->difficulty }}
+                                            </span>
+                                        </div>
+                                        <h3 class="text-2xl font-bold text-white group-hover:text-cb-green transition">
+                                            {{ $contest->name }}
+                                        </h3>
+                                    </div>
+
+                                    <div class="p-6 space-y-4">
+                                        <p class="text-gray-400 text-sm line-clamp-2">
+                                            {{ $contest->description }}
+                                        </p>
+
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-calendar text-cb-green"></i>
+                                                <span class="text-gray-400">{{ $contest->start_date->format('d/m/Y') }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-clock text-cb-green"></i>
+                                                <span class="text-gray-400">{{ $contest->duration }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-users text-cb-green"></i>
+                                                <span class="text-gray-400">{{ $contest->participants }} personas</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <i class="fas fa-trophy text-cb-green"></i>
+                                                <span class="text-gray-400">${{ number_format($contest->prize, 0) }}</span>
+                                            </div>
+                                        </div>
+
+                                        @if($contest->languages && is_array($contest->languages) && count($contest->languages) > 0)
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach(array_slice($contest->languages, 0, 3) as $language)
+                                                    <span class="px-2 py-1 bg-cb-green/10 text-cb-green border border-cb-green/30 rounded text-xs font-medium">
+                                                        {{ $language }}
+                                                    </span>
+                                                @endforeach
+                                                @if(count($contest->languages) > 3)
+                                                    <span class="px-2 py-1 bg-gray-700 text-gray-400 rounded text-xs">
+                                                        +{{ count($contest->languages) - 3 }} más
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+
+                                        @auth
+                                            <a href="{{ route('contests.show', $contest->id) }}" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
+                                                Ver Detalles
+                                                <i class="fas fa-arrow-right ml-2"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('login') }}" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
+                                                Inicia Sesión para Participar
+                                                <i class="fas fa-sign-in-alt ml-2"></i>
+                                            </a>
+                                        @endauth
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-16">
+                            <div class="w-24 h-24 bg-cb-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-trophy text-cb-green text-4xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                No hay concursos disponibles en este momento
+                            </h3>
+                            <p class="text-gray-400 mb-8">
+                                Los nuevos desafíos se publicarán pronto. ¡Mantente atento!
+                            </p>
+                            @auth
+                                @if(Auth::user()->isAdmin())
+                                    <a href="{{ route('admin.contests.create') }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Crear Primer Concurso
+                                    </a>
+                                @endif
+                            @endauth
+                        </div>
+                    @endif
+                </section>
+
             </div>
         </main>
 
-        {{-- Footer --}}
         <footer class="mt-20 border-t border-cb-border bg-cb-card pt-10 pb-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -371,45 +262,29 @@
                         <p class="text-sm text-gray-400 mb-4">
                             La plataforma líder de programación competitiva en México y Latinoamérica.
                         </p>
-                        <div class="flex space-x-4 text-gray-400">
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-twitter text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-facebook text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-instagram text-xl"></i></a>
-                            <a href="#" class="hover:text-cb-green transition"><i class="fab fa-github text-xl"></i></a>
-                        </div>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Plataforma</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Cómo funciona</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Reglas y términos</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Preguntas frecuentes</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Documentación</a></li>
                         </ul>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Comunidad</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Discord</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Foro</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Tutoriales</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Embajadores</a></li>
                         </ul>
                     </div>
-
                     <div>
                         <h5 class="text-white font-bold mb-4">Compañía</h5>
                         <ul class="space-y-2 text-sm text-gray-400">
                             <li><a href="#" class="hover:text-cb-green transition">Acerca de</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Patrocinadores</a></li>
-                            <li><a href="#" class="hover:text-cb-green transition">Trabaja con nosotros</a></li>
                             <li><a href="#" class="hover:text-cb-green transition">Contacto</a></li>
                         </ul>
                     </div>
                 </div>
-
                 <div class="mt-10 pt-6 border-t border-cb-border text-center text-sm text-gray-500">
                     <p>© 2025 CodeBattle. Todos los derechos reservados.</p>
                 </div>

@@ -30,48 +30,45 @@ class ContestController extends Controller
         return view('contests.show', compact('contest', 'isRegistered', 'registration'));
     }
 
-    /**
-     * Registrar equipo en el concurso
-     */
-    public function register(Request $request, $id)
-    {
-        $contest = Contest::findOrFail($id);
-        
-        // Validar datos
-        $validated = $request->validate([
-            'team_name' => 'required|string|max:255',
-            'team_size' => 'required|integer|min:' . $contest->min_team_members . '|max:' . $contest->max_team_members,
-            'leader_phone' => 'required|string|max:20',
-            'members' => 'required|array|min:' . $contest->min_team_members,
-            'members.*.name' => 'required|string|max:255',
-            'members.*.birthdate' => 'required|date|before:today',
-        ]);
+/**
+ * Registrar equipo en el concurso
+ */
+public function register(Request $request, $id)
+{
+    $request->validate([
+        'team_name' => 'required|string|max:255',
+        'max_members' => 'required|integer|min:1|max:10',
+    ]);
 
-        // Verificar si ya está registrado
-        $existingRegistration = ContestRegistration::where('user_id', Auth::id())
-            ->where('contest_id', $id)
-            ->first();
+    $contest = Contest::findOrFail($id);
 
-        if ($existingRegistration) {
-            return redirect()->back()->with('error', 'Ya estás registrado en este concurso');
-        }
+    // Verificar si el usuario ya está registrado en este concurso
+    $existingRegistration = ContestRegistration::where('contest_id', $id)
+                                              ->where('user_id', Auth::id())
+                                              ->first();
 
-        // Crear registro
-        ContestRegistration::create([
-            'user_id' => Auth::id(),
-            'contest_id' => $id,
-            'team_name' => $validated['team_name'],
-            'team_size' => $validated['team_size'],
-            'team_members' => $validated['members'],
-            'leader_phone' => $validated['leader_phone'],
-            'status' => 'registered',
-        ]);
-
-        // Incrementar contador de participantes
-        $contest->increment('participants');
-
-        return redirect()->route('profile.index')->with('success', '¡Te has registrado exitosamente al concurso!');
+    if ($existingRegistration) {
+        return back()->with('error', 'Ya estás registrado en este concurso');
     }
+
+    // Crear el registro del equipo
+    $registration = ContestRegistration::create([
+        'user_id' => Auth::id(),
+        'contest_id' => $id,
+        'team_name' => $request->team_name,
+        'team_code' => ContestRegistration::generateTeamCode(),
+        'is_public' => $request->has('is_public'),
+        'max_members' => $request->max_members,
+        'current_members' => 1,
+        'team_leader_id' => Auth::id(),
+        'is_team_leader' => true,
+        'status' => 'registered',
+    ]);
+
+    return redirect()->route('profile.index')
+                     ->with('success', '¡Equipo creado exitosamente! Tu código es: ' . $registration->team_code);
+}
+
 
     /**
      * Cancelar registro
@@ -89,4 +86,7 @@ class ContestController extends Controller
 
         return redirect()->route('profile.index')->with('success', 'Registro cancelado exitosamente');
     }
+
+
+    
 }
