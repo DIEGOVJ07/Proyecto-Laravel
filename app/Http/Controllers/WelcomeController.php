@@ -14,9 +14,6 @@ class WelcomeController extends Controller
                           ->orderBy('start_date', 'asc')
                           ->get();
 
-        // Obtener el próximo evento (el primero de la lista)
-        $nextEvent = $contests->first();
-
-        return view('welcome', compact('contests', 'nextEvent'));
+        return view('welcome', compact('contests'));
     }
 }

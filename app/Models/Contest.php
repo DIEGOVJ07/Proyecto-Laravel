@@ -31,6 +31,7 @@ class Contest extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'prize' => 'decimal:2',
+
     ];
 
     public function registrations()
