@@ -1,0 +1,208 @@
+@startuml
+title Proceso: Generación de constancias
+
+skinparam backgroundColor #FEFEFE
+skinparam activity {
+  BackgroundColor #F3E5F5
+  BorderColor #8E24AA
+  BackgroundColor<<Success>> #C8E6C9
+  BorderColor<<Success>> #388E3C
+  BackgroundColor<<Error>> #FFCDD2
+  BorderColor<<Error>> #C62828
+  BackgroundColor<<Process>> #BBDEFB
+  BorderColor<<Process>> #1976D2
+}
+
+|Administrador|
+start
+:Solicitar generación de constancias;
+
+if (¿Usuario autenticado?) then (No)
+  #FFCDD2:Redirigir a login;
+  stop
+else (Sí)
+  if (¿Rol del usuario?) then (Admin/Super Admin)
+    :Acceso a panel de constancias;
+  else (Participante)
+    :Ver mis constancias en Mi Perfil;
+    stop
+  else (Otro)
+    #FFCDD2:Acceso denegado;
+    stop
+  endif
+endif
+
+:Seleccionar tipo de generación;
+
+if (Generación) then (Individual)
+  :Seleccionar concurso;
+  :Ver lista de participantes;
+  
+  if (¿Aplicar filtros?) then (Todos)
+    :Seleccionar todos los participantes;
+  elseif (Clasificados) then
+    :Filtrar status = "qualified";
+  elseif (Top N) then
+    :Filtrar por ranking (Top 1, 2, 3);
+  else (Manual)
+    :Selección manual de participantes;
+  endif
+  
+elseif (Masiva) then
+  :Seleccionar concurso;
+  :Auto-seleccionar equipos clasificados;
+endif
+
+:Confirmar selección;
+
+:Elegir tipo de constancia;
+
+fork
+  :Participación;
+  note right
+    Para todos los equipos
+    que completaron el concurso
+  end note
+fork again
+  :Clasificación;
+  note right
+    Para equipos con
+    score >= 50
+  end note
+fork again
+  :Ganador;
+  note right
+    Para Top 3
+    del ranking
+  end note
+fork again
+  :Personalizada;
+  note right
+    Reconocimientos
+    especiales
+  end note
+end fork
+
+|Sistema|
+partition "Recopilar Datos" {
+  :Obtener datos del participante;
+  note right
+    - Nombre completo
+    - Email
+    - ID de usuario
+  end note
+  
+  :Obtener datos del concurso;
+  note right
+    - Nombre del concurso
+    - Fechas (inicio/fin)
+    - Descripción
+  end note
+  
+  :Obtener datos del equipo;
+  note right
+    - Nombre del equipo
+    - Miembros
+    - Líder
+  end note
+  
+  :Obtener puntajes y ranking;
+  note right
+    - Score total
+    - Posición en ranking
+    - Categorías destacadas
+  end note
+}
+
+partition "Generar PDF" <<Process>> {
+  :Crear documento PDF;
+  :Agregar logo de CodeBattle;
+  :Agregar encabezado;
+  
+  :Insertar información del participante;
+  note right
+    "Se otorga la presente
+    constancia a:
+    [NOMBRE COMPLETO]"
+  end note
+  
+  :Insertar información del concurso;
+  note right
+    "Por su participación en:
+    [NOMBRE DEL CONCURSO]
+    Del [FECHA] al [FECHA]"
+  end note
+  
+  if (Tipo de constancia) then (Ganador)
+    :Agregar posición y logros;
+    note right
+      "Obtuvo el [1°/2°/3°] lugar
+      con [XX] puntos"
+    end note
+  elseif (Clasificación) then
+    :Agregar puntaje y status;
+  endif
+  
+  :Agregar firma digital;
+  :Generar código QR único;
+  note right
+    QR contiene URL de verificación:
+    codebattle.com/verificar/ABC123XYZ
+  end note
+  
+  :Agregar pie de página;
+  note right
+    - Fecha de emisión
+    - Código de verificación
+    - URL de validación
+  end note
+}
+
+partition "Almacenar" {
+  :Guardar PDF en storage;
+  note right
+    /storage/certificates/
+    {contest_id}/
+    certificate_{user_id}_{timestamp}.pdf
+  end note
+  
+  :Generar hash único (SHA-256);
+  
+  :Guardar registro en BD;
+  note right
+    Tabla: certificates
+    - certificate_code
+    - file_path
+    - hash
+    - issued_at
+  end note
+}
+
+|Participante|
+:Enviar notificación por email;
+note right
+  Email contiene:
+  - Felicitación
+  - Enlace de descarga
+  - Código de verificación
+end note
+
+|Administrador|
+#C8E6C9:Mostrar mensaje de éxito;
+
+if (¿Generar más constancias?) then (Sí)
+  :Volver al inicio;
+  detach
+else (No)
+  :Generar reporte resumen;
+  note right
+    Reporte incluye:
+    - Total generadas
+    - Por tipo
+    - Lista de participantes
+    - Fecha de generación
+  end note
+  stop
+endif
+
+@enduml

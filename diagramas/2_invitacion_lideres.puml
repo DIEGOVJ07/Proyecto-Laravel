@@ -1,0 +1,127 @@
+@startuml
+title Proceso: Invitación de líderes para integrar nuevos miembros
+
+skinparam backgroundColor #FEFEFE
+skinparam activity {
+  BackgroundColor #FFF3E0
+  BorderColor #F57C00
+  BackgroundColor<<Success>> #C8E6C9
+  BorderColor<<Success>> #388E3C
+  BackgroundColor<<Error>> #FFCDD2
+  BorderColor<<Error>> #C62828
+}
+
+|Líder de Equipo|
+start
+:Desea invitar nuevos miembros;
+
+if (¿Equipo ya existe?) then (No)
+  :Registrarse en concurso;
+  :Configurar nombre del equipo;
+  
+  if (¿Hacer equipo público?) then (Sí)
+    :Marcar is_public = true;
+    note right
+      Aparecerá en búsquedas
+      y listas públicas
+    end note
+  else (No)
+    :Mantener is_public = false;
+    note right
+      Solo accesible
+      mediante código
+    end note
+  endif
+  
+  :Sistema genera código único;
+  note right
+    Código alfanumérico
+    de 5 caracteres
+    Ejemplo: ABC12
+  end note
+  
+  :Guardar equipo en BD;
+else (Sí)
+  :Acceder a Mi Perfil;
+  :Ver mis equipos activos;
+endif
+
+:Ver código del equipo;
+
+|Líder de Equipo|
+:Compartir código con usuarios;
+note right
+  Métodos:
+  - WhatsApp
+  - Email
+  - Discord
+  - Presencial
+end note
+
+|Usuario Participante|
+:Recibir código de invitación;
+
+fork
+  :Opción A: Ingresar código manualmente;
+fork again
+  :Opción B: Ver en lista pública;
+end fork
+
+:Buscar/Seleccionar equipo;
+
+if (¿Código válido?) then (No)
+  #FFCDD2:Error: Código no encontrado;
+  stop
+else (Sí)
+  :Mostrar información del equipo;
+  note right
+    - Nombre del equipo
+    - Líder
+    - Miembros actuales
+    - Espacios disponibles
+    - Concurso
+  end note
+endif
+
+:Usuario hace clic en "Unirse";
+
+|Sistema|
+partition "Validaciones" {
+  if (¿Hay espacio disponible?) then (No)
+    #FFCDD2:Error: Equipo completo;
+    stop
+  endif
+  
+  if (¿Usuario ya es miembro?) then (Sí)
+    #FFCDD2:Error: Ya eres miembro;
+    stop
+  endif
+  
+  if (¿Usuario en otro equipo?) then (Sí)
+    #FFCDD2:Error: Ya estás en otro equipo;
+    stop
+  endif
+}
+
+partition "Proceso de Unión" {
+  :INSERT en team_members;
+  :contest_registration_id;
+  :user_id;
+  :status = "accepted";
+  
+  :UPDATE contest_registrations;
+  :current_members = current_members + 1;
+  
+  |Líder de Equipo|
+  :Notificación: Nuevo miembro;
+  
+  |Usuario Participante|
+  #C8E6C9:Confirmación: Te has unido al equipo;
+  
+  |Sistema|
+  :Actualizar vista del equipo;
+}
+
+stop
+
+@enduml

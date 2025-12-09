@@ -1,0 +1,73 @@
+@startuml
+title Proceso: Solicitud para unirse a un equipo
+
+skinparam backgroundColor #FEFEFE
+skinparam activity {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  BackgroundColor<<Success>> #C8E6C9
+  BorderColor<<Success>> #388E3C
+  BackgroundColor<<Error>> #FFCDD2
+  BorderColor<<Error>> #C62828
+}
+
+start
+:Usuario desea unirse a un equipo;
+
+if (¿Usuario autenticado?) then (No)
+  :Redirigir a página de Login;
+  stop
+else (Sí)
+  :Ver detalles del concurso;
+endif
+
+:Elegir método de búsqueda;
+
+if (Tipo de búsqueda) then (Ver equipos públicos)
+  :Listar equipos públicos del concurso;
+  :Seleccionar equipo de la lista;
+else (Buscar por código)
+  :Ingresar código de 5 caracteres;
+  :Buscar equipo en sistema;
+  
+  if (¿Equipo existe?) then (No)
+    #FFCDD2:Error: Código no encontrado;
+    stop
+  else (Sí)
+    :Mostrar detalles del equipo;
+  endif
+endif
+
+:Usuario hace clic en "Unirse";
+
+' Validaciones
+partition "Validaciones" {
+  if (¿Usuario ya es miembro?) then (Sí)
+    #FFCDD2:Error: Ya eres miembro de este equipo;
+    stop
+  endif
+  
+  if (¿Equipo está lleno?) then (Sí)
+    #FFCDD2:Error: Equipo completo;
+    stop
+  endif
+  
+  if (¿Usuario en otro equipo del concurso?) then (Sí)
+    #FFCDD2:Error: Ya estás registrado en otro equipo;
+    stop
+  endif
+}
+
+' Proceso de unión exitoso
+partition "Unión Exitosa" {
+  :Crear registro en team_members;
+  :status = "accepted";
+  :Incrementar current_members del equipo;
+  :Notificar al líder del equipo;
+  #C8E6C9:Mostrar mensaje de éxito;
+  :Redirigir a Mi Perfil;
+}
+
+stop
+
+@enduml

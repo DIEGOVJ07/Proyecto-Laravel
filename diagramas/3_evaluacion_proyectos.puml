@@ -1,0 +1,151 @@
+@startuml
+title Proceso: Evaluación de proyectos
+
+skinparam backgroundColor #FEFEFE
+skinparam activity {
+  BackgroundColor #E1BEE7
+  BorderColor #7B1FA2
+  BackgroundColor<<Success>> #C8E6C9
+  BorderColor<<Success>> #388E3C
+  BackgroundColor<<Error>> #FFCDD2
+  BorderColor<<Error>> #C62828
+  BackgroundColor<<Qualified>> #81C784
+  BorderColor<<Qualified>> #2E7D32
+}
+
+|Evaluador|
+start
+:Iniciar evaluación de proyectos;
+
+if (Rol del usuario) then (Admin/Super Admin)
+  :Acceder a Panel de Administración;
+  :Ver todos los concursos;
+elseif (Juez) then
+  :Acceder a Panel de Jueces;
+  :Ver solo concursos asignados;
+else (Otro rol)
+  #FFCDD2:Acceso denegado;
+  stop
+endif
+
+:Seleccionar concurso a evaluar;
+
+:Ver lista de equipos registrados;
+
+if (¿Aplicar filtros?) then (Sí)
+  :Filtrar por estado/puntaje;
+  note right
+    Filtros disponibles:
+    - No calificados (score = 0)
+    - Calificados (score > 0)
+    - Clasificados (status = qualified)
+    - Por rango de puntaje
+  end note
+endif
+
+:Seleccionar equipo a evaluar;
+
+:Ver detalles del proyecto;
+note right
+  - Nombre del equipo
+  - Miembros
+  - Descripción del proyecto
+  - Enlaces (GitHub, Demo)
+  - Documentación
+end note
+
+:Abrir formulario de evaluación;
+
+partition "Ingresar Puntajes" {
+  :Funcionalidad (0-40 puntos);
+  note right
+    ¿El proyecto cumple
+    con los requisitos?
+    ¿Funciona correctamente?
+  end note
+  
+  :Calidad del código (0-30 puntos);
+  note right
+    ¿Código estructurado?
+    ¿Buenas prácticas?
+    ¿Documentación?
+  end note
+  
+  :Diseño (0-30 puntos);
+  note right
+    ¿Interfaz intuitiva?
+    ¿Diseño atractivo?
+    ¿Consistencia visual?
+  end note
+}
+
+if (¿Puntajes válidos?) then (No)
+  #FFCDD2:Error: Puntaje fuera de rango;
+  :Ajustar puntajes;
+  detach
+else (Sí)
+  :Calcular puntaje total;
+  note right
+    Total = Funcionalidad + 
+            Código + Diseño
+    Máximo: 100 puntos
+  end note
+endif
+
+:Ingresar comentarios y feedback;
+note right
+  Comentarios opcionales sobre:
+  - Fortalezas del proyecto
+  - Áreas de mejora
+  - Recomendaciones
+end note
+
+:Enviar evaluación;
+
+|Sistema|
+partition "Guardar Evaluación" {
+  :Guardar en contest_registrations;
+  :score = total_calculado;
+  :score_details = JSON con desglose;
+  :feedback = comentarios;
+  
+  if (¿Puntaje >= 50?) then (Sí)
+    #81C784:status = "qualified";
+    note right
+      Equipo clasificado
+      automáticamente
+    end note
+  else (No)
+    :status = "disqualified";
+    note right
+      Equipo no clasificó
+    end note
+  endif
+  
+  :Actualizar tabla de clasificación;
+  :Ordenar por puntaje DESC;
+}
+
+|Equipo|
+:Notificación de evaluación;
+note right
+  El equipo recibe:
+  - Puntaje total
+  - Desglose por categoría
+  - Feedback del evaluador
+  - Estado de clasificación
+end note
+
+|Evaluador|
+#C8E6C9:Mostrar mensaje de éxito;
+
+if (¿Evaluar más equipos?) then (Sí)
+  :Volver a lista de equipos;
+  detach
+else (No)
+  :Generar reporte de evaluación;
+  :Exportar resultados;
+  stop
+endif
+
+@enduml
