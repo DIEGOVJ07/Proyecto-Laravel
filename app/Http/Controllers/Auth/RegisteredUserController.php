@@ -41,6 +41,11 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // --- CORRECCIÓN: ASIGNAR ROL AUTOMÁTICAMENTE ---
+        // Esto le da los permisos 'ver-concursos', 'ver-perfil', etc.
+        $user->assignRole('user');
+        // -----------------------------------------------
+
         event(new Registered($user));
 
         Auth::login($user);
