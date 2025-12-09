@@ -10,42 +10,51 @@ class RolesYPermisosSeeder extends Seeder
 {
     public function run(): void
     {
-        // Resetear caché de roles y permisos
+        // 1. Resetear caché de roles y permisos
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Crear permisos
+        // 2. Lista de Permisos
         $permissions = [
-            // Permisos de Concursos
+            // Concursos
             'ver-concursos',
             'crear-concursos',
             'editar-concursos',
             'eliminar-concursos',
-            'registrar-concurso',
+            'registrar-concurso', // Inscribirse como participante
+            'cerrar-concurso',    // Finalizar el evento
             
-            // Permisos de Jueces
+            // Jueces y Calificación
             'ver-jueces',
             'crear-jueces',
             'editar-jueces',
             'eliminar-jueces',
             'asignar-jueces',
+            'calificar-equipos', // <--- NUEVO: Para guardar puntuaciones (gradeTeam)
             
-            // Permisos de Clasificación
+            // Equipos (NUEVOS - Para la lógica de TeamController)
+            'ver-equipos',
+            'crear-equipos',
+            'buscar-equipos',
+            'unirse-equipos',
+            'salir-equipos',
+
+            // Clasificación
             'ver-clasificacion',
-            'editar-clasificacion',
+            'editar-clasificacion', // Solo Admin/Juez
             
-            // Permisos de Blog
+            // Blog
             'ver-blog',
             'crear-blog',
             'editar-blog',
             'eliminar-blog',
             
-            // Permisos de Sedes
+            // Sedes
             'ver-sedes',
             'crear-sedes',
             'editar-sedes',
             'eliminar-sedes',
             
-            // Permisos de Usuarios
+            // Usuarios
             'ver-usuarios',
             'crear-usuarios',
             'editar-usuarios',
@@ -57,29 +66,34 @@ class RolesYPermisosSeeder extends Seeder
             'ver-logs-auditoria',
             'gestionar-admins',
             
-            // Permisos de Perfil
+            // Perfil
             'ver-perfil',
             'editar-perfil',
         ];
 
+        // 3. Crear permisos (usando firstOrCreate para evitar duplicados)
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Crear roles y asignar permisos
+        // 4. Crear Roles y Asignar Permisos
 
-        // ROL: Super Admin - Control total del sistema
-        $superAdminRole = Role::create(['name' => 'super_admin']);
-        $superAdminRole->givePermissionTo(Permission::all()); // TODOS los permisos
+        // --- ROL: SUPER ADMIN ---
+        // Control total del sistema
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $superAdminRole->syncPermissions(Permission::all()); // TODOS los permisos
 
-        // ROL: Admin - Gestión operativa sin permisos críticos
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo([
+        // --- ROL: ADMIN ---
+        // Gestión operativa completa
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole->syncPermissions([
             // Concursos
             'ver-concursos',
             'crear-concursos',
             'editar-concursos',
             'eliminar-concursos',
+            'cerrar-concurso',
+            'calificar-equipos',
             
             // Jueces
             'ver-jueces',
@@ -87,6 +101,13 @@ class RolesYPermisosSeeder extends Seeder
             'editar-jueces',
             'eliminar-jueces',
             'asignar-jueces',
+            
+            // Equipos
+            'ver-equipos',
+            'crear-equipos',
+            'buscar-equipos',
+            'unirse-equipos',
+            'salir-equipos',
             
             // Clasificación
             'ver-clasificacion',
@@ -104,7 +125,7 @@ class RolesYPermisosSeeder extends Seeder
             'editar-sedes',
             'eliminar-sedes',
             
-            // Usuarios (solo ver, sin modificar)
+            // Usuarios (solo ver, sin modificar - eso es de super_admin)
             'ver-usuarios',
             
             // Perfil
@@ -112,29 +133,40 @@ class RolesYPermisosSeeder extends Seeder
             'editar-perfil',
         ]);
 
-        // ROL: Juez - Permisos de evaluación
-        $juezRole = Role::create(['name' => 'juez']);
-        $juezRole->givePermissionTo([
+        // --- ROL: JUEZ ---
+        // Puede ver todo, calificar equipos y editar clasificación
+        $juezRole = Role::firstOrCreate(['name' => 'juez']);
+        $juezRole->syncPermissions([
             'ver-concursos',
+            'calificar-equipos', // Vital para tu sistema de notas
             'ver-jueces',
             'ver-clasificacion',
             'editar-clasificacion',
             'ver-blog',
+            'crear-blog', // A veces los jueces escriben artículos
             'ver-sedes',
             'ver-perfil',
             'editar-perfil',
+            'ver-equipos', // Para ver la lista de equipos a calificar
         ]);
 
-        // ROL: Usuario - Permisos básicos
-        $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo([
+        // --- ROL: USUARIO ---
+        // Participante estándar
+        $userRole = Role::firstOrCreate(['name' => 'user']);
+        $userRole->syncPermissions([
             'ver-concursos',
-            'registrar-concurso',
-            'ver-clasificacion',
+            'registrar-concurso', // Inscribirse
+            'ver-clasificacion',  // Ver ranking (pero NO editar)
             'ver-blog',
             'ver-sedes',
             'ver-perfil',
             'editar-perfil',
+            // Gestión de su propio equipo
+            'ver-equipos',
+            'crear-equipos',
+            'buscar-equipos',
+            'unirse-equipos',
+            'salir-equipos',
         ]);
     }
 }
