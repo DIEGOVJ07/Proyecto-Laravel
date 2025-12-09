@@ -14,32 +14,32 @@
             <div class="flex flex-wrap gap-3">
                 @foreach($categories as $category)
                     <a href="{{ route('blog.index', ['category' => $category['name']]) }}" 
-                       class="px-4 py-2 rounded-lg font-medium transition border
-                              @if($selectedCategory === $category['name'])
-                                  @if($category['name'] === 'Todos')
-                                      bg-cb-green text-cb-dark border-cb-green
-                                  @elseif($category['name'] === 'Algoritmos')
-                                      bg-blue-500 text-white border-blue-500
-                                  @elseif($category['name'] === 'Estructuras de Datos')
-                                      bg-cyan-500 text-white border-cyan-500
-                                  @elseif($category['name'] === 'Competencias')
-                                      bg-yellow-500 text-cb-dark border-yellow-500
-                                  @else
-                                      bg-green-500 text-cb-dark border-green-500
-                                  @endif
-                              @else
-                                  @if($category['name'] === 'Todos')
-                                      bg-cb-green/10 hover:bg-cb-green/20 text-cb-green border-cb-green/30
-                                  @elseif($category['name'] === 'Algoritmos')
-                                      bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/30
-                                  @elseif($category['name'] === 'Estructuras de Datos')
-                                      bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border-cyan-500/30
-                                  @elseif($category['name'] === 'Competencias')
-                                      bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border-yellow-500/30
-                                  @else
-                                      bg-green-500/10 hover:bg-green-500/20 text-green-400 border-green-500/30
-                                  @endif
-                              @endif
+                    class="px-4 py-2 rounded-lg font-medium transition border
+                            @if($selectedCategory === $category['name'])
+                                @if($category['name'] === 'Todos')
+                                    bg-cb-green text-cb-dark border-cb-green
+                                @elseif($category['name'] === 'Algoritmos')
+                                    bg-blue-500 text-white border-blue-500
+                                @elseif($category['name'] === 'Estructuras de Datos')
+                                    bg-cyan-500 text-white border-cyan-500
+                                @elseif($category['name'] === 'Competencias')
+                                    bg-yellow-500 text-cb-dark border-yellow-500
+                                @else
+                                    bg-green-500 text-cb-dark border-green-500
+                                @endif
+                            @else
+                                @if($category['name'] === 'Todos')
+                                    bg-cb-green/10 hover:bg-cb-green/20 text-cb-green border-cb-green/30
+                                @elseif($category['name'] === 'Algoritmos')
+                                    bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/30
+                                @elseif($category['name'] === 'Estructuras de Datos')
+                                    bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border-cyan-500/30
+                                @elseif($category['name'] === 'Competencias')
+                                    bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border-yellow-500/30
+                                @else
+                                    bg-green-500/10 hover:bg-green-500/20 text-green-400 border-green-500/30
+                                @endif
+                            @endif
                        ">
                         {{ $category['name'] }} ({{ $category['count'] }})
                     </a>
