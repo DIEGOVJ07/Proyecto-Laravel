@@ -38,10 +38,12 @@
                             </div>
                             
                             <h4 class="text-xl font-bold text-white truncate mb-1">{{ $entry->team_name }}</h4>
-                            <p class="text-xs text-gray-500 mb-4">Líder: {{ $entry->user_name }}</p>
+                            {{-- Lee el nombre del líder desde la relación teamLeader --}}
+                            <p class="text-xs text-gray-500 mb-4">Líder: {{ $entry->teamLeader->name ?? 'N/A' }}</p>
                             
                             <div class="inline-block bg-[#0f111a] rounded-lg px-4 py-2 border border-[#2c3240]">
-                                <p class="text-[#10b981] font-mono font-bold text-lg">{{ number_format($entry->points) }} <span class="text-xs text-gray-500">PTS</span></p>
+                                {{-- Lee el score desde la columna score --}}
+                                <p class="text-[#10b981] font-mono font-bold text-lg">{{ number_format($entry->score) }} <span class="text-xs text-gray-500">PTS</span></p>
                             </div>
                         </div>
                     @endforeach
@@ -55,7 +57,7 @@
                         <i class="fas fa-list-ol text-[#10b981]"></i> Ranking por Equipos
                     </h3>
                     <span class="text-xs text-gray-500 bg-[#0f111a] px-3 py-1 rounded-full border border-[#2c3240]">
-                        {{ $ranking->count() }} Equipos
+                        {{ $ranking->count() }} Equipos clasificados
                     </span>
                 </div>
 
@@ -67,7 +69,7 @@
                                 <th class="px-6 py-4">Nombre del Equipo</th>
                                 <th class="px-6 py-4">Líder / Integrante</th>
                                 <th class="px-6 py-4 text-right">Puntos</th>
-                                <th class="px-6 py-4 text-right">Prob. Resueltos</th>
+                                <th class="px-6 py-4 text-right">Estado</th> {{-- Cambiado a Estado --}}
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#2c3240] text-sm text-gray-300">
@@ -89,24 +91,23 @@
 
                                     {{-- Usuario --}}
                                     <td class="px-6 py-4 text-gray-400 text-xs">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-6 h-6 rounded-full bg-[#2c3240] flex items-center justify-center text-[10px] text-white">
-                                                {{ substr($entry->user_name, 0, 1) }}
-                                            </div>
-                                            {{ $entry->user_name }}
-                                        </div>
+                                        {{ $entry->teamLeader->name ?? 'N/A' }}
                                     </td>
 
                                     {{-- Puntos --}}
                                     <td class="px-6 py-4 text-right">
                                         <span class="text-[#10b981] font-mono font-bold text-base">
-                                            {{ number_format($entry->points) }}
+                                            {{ number_format($entry->score) }}
                                         </span>
                                     </td>
 
-                                    {{-- Problemas --}}
-                                    <td class="px-6 py-4 text-right text-gray-400">
-                                        {{ $entry->problems_solved }}
+                                    {{-- Estado --}}
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="text-[10px] font-bold px-2 py-1 rounded border 
+                                            @if($entry->status == 'qualified') border-[#10b981] text-[#10b981] 
+                                            @else border-gray-600 text-gray-400 @endif">
+                                            {{ $entry->status }}
+                                        </span>
                                     </td>
                                 </tr>
                             @endforeach

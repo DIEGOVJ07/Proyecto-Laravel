@@ -3,23 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contest;
-use App\Models\ContestRegistration;
+use App\Models\ContestRegistration; // Necesario para la consulta
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User; // Para obtener el nombre del líder
 
 class LeaderboardController extends Controller
 {
     public function index()
     {
-        // Obtener concursos finalizados
+        // El index se mantiene igual (muestra la lista de concursos finalizados)
         $eventosFinalizados = Contest::where('status', 'Finalizado')
-            ->withCount('leaderboardParticipants as participants_count')
+            ->withCount('registrations as participants_count') // Usar registrations_count si es más preciso
             ->orderBy('start_date', 'desc')
             ->get();
 
         $stats = [
-            'total_users' => \App\Models\User::count(),
+            'total_users' => User::count(),
             'total_events_finished' => $eventosFinalizados->count(),
         ];
 
@@ -30,29 +31,17 @@ class LeaderboardController extends Controller
     {
         $event = Contest::findOrFail($id);
 
-        // --- CONSULTA CORREGIDA CON LEFT JOIN ---
-        $ranking = DB::table('leaderboard')
-            ->join('users', 'leaderboard.user_id', '=', 'users.id') // INNER JOIN: Solo muestra usuarios que están en la tabla Leaderboard
-            
-            // CAMBIO CLAVE: Usamos LEFT JOIN para no perder participantes sin registro de equipo perfecto
-            ->leftJoin('contest_registrations', function($join) { 
-                $join->on('leaderboard.user_id', '=', 'contest_registrations.user_id')
-                     ->on('leaderboard.contest_id', '=', 'contest_registrations.contest_id');
-            })
-            
-            ->where('leaderboard.contest_id', $id)
-            ->orderByDesc('leaderboard.points')
-            ->orderByDesc('leaderboard.problems_solved')
-            ->select(
-                'users.name as user_name',
-                'contest_registrations.team_name', // Será NULL si no hay registro
-                'leaderboard.points',
-                'leaderboard.problems_solved'
-            )
+        // --- CONSULTA CORREGIDA: Ranking basado ÚNICAMENTE en contest_registrations.score ---
+        $ranking = ContestRegistration::where('contest_id', $id)
+            ->where('score', '>', 0) // Excluir equipos con score 0 (no calificados o que no enviaron)
+            ->orderByDesc('score')    // 1. Clasificación por score (puntos)
+            ->orderByDesc('updated_at') // 2. Desempate: Más reciente (opcional, podrías usar problemas_resueltos si existiera)
+            ->with('teamLeader')      // Cargamos el modelo User del líder para mostrar su nombre
             ->get();
+        // ---------------------------------------------------------------------------------
 
         $hallOfFame = $ranking->take(3);
-
+        
         // Variables auxiliares
         $isRegistered = false;
         $registration = null;
@@ -64,12 +53,13 @@ class LeaderboardController extends Controller
             $isRegistered = $registration !== null;
         }
 
-        return view('clasificacion.show', compact(
-            'event', 
-            'ranking', 
-            'hallOfFame', 
-            'isRegistered', 
-            'registration'
-        ));
+        // Renombramos la variable para que la vista sea más fácil de leer
+        return view('clasificacion.show', [
+            'event' => $event, 
+            'ranking' => $ranking, // Collection de ContestRegistration
+            'hallOfFame' => $hallOfFame,
+            'isRegistered' => $isRegistered, 
+            'registration' => $registration
+        ]);
     }
 }

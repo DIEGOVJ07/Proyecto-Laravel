@@ -194,29 +194,6 @@
                         Crear Cuenta
                     </button>
                 </form>
-
-                {{-- Divider --}}
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-cb-border"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-cb-card text-gray-500">O CONTINÚA CON</span>
-                    </div>
-                </div>
-
-                {{-- Social login buttons --}}
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="flex items-center justify-center py-3 px-4 bg-cb-dark border border-cb-border rounded-lg text-gray-300 hover:bg-cb-border transition-all">
-                        <i class="fab fa-github text-xl mr-2"></i>
-                        GitHub
-                    </button>
-                    <button class="flex items-center justify-center py-3 px-4 bg-cb-dark border border-cb-border rounded-lg text-gray-300 hover:bg-cb-border transition-all">
-                        <i class="fab fa-google text-xl mr-2"></i>
-                        Google
-                    </button>
-                </div>
-
                 {{-- Ya tienes cuenta --}}
                 <div class="mt-6 text-center">
                     <p class="text-gray-400 text-sm">
