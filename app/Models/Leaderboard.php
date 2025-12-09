@@ -1,47 +1,53 @@
 <?php
 
-namespace App\Models;
+namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Contest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
-class Leaderboard extends Model
+class LeaderboardController extends Controller
 {
-    use HasFactory;
-
-    protected $table = 'leaderboard';
-
-    protected $fillable = [
-        'user_id',
-        'total_points',
-        'contests_won',
-        'problems_solved',
-        'global_ranking',
-        'country_code',
-        'trend',
-    ];
-
-    public function user()
+    public function index()
     {
-        return $this->belongsTo(User::class);
+        $eventosFinalizados = Contest::where('status', 'Finalizado')
+            ->withCount('leaderboardParticipants as participants_count')
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        $stats = [
+            'total_users' => \App\Models\User::count(),
+            'total_events_finished' => $eventosFinalizados->count(),
+        ];
+
+        return view('clasificacion.index', compact('eventosFinalizados', 'stats'));
     }
 
-    public function getTrendIcon()
+    public function show($id)
     {
-        return match($this->trend) {
-            'up' => '<i class="fas fa-arrow-up text-green-400"></i>',
-            'down' => '<i class="fas fa-arrow-down text-red-400"></i>',
-            default => '<span class="text-gray-400">—</span>',
-        };
-    }
+        $event = Contest::findOrFail($id); // Usamos $event para mantener consistencia
 
-    public function getRankIcon()
-    {
-        return match($this->global_ranking) {
-            1 => '👑',
-            2 => '🥈',
-            3 => '🥉',
-            default => '#' . $this->global_ranking,
-        };
+        // CONSULTA ESPECIAL: Obtener Equipos, Puntos y el Líder
+        $ranking = DB::table('leaderboard')
+            ->join('users', 'leaderboard.user_id', '=', 'users.id')
+            ->join('contest_registrations', function($join) {
+                $join->on('leaderboard.user_id', '=', 'contest_registrations.user_id')
+                     ->on('leaderboard.contest_id', '=', 'contest_registrations.contest_id');
+            })
+            ->where('leaderboard.contest_id', $id)
+            ->orderByDesc('leaderboard.points') // Ordenar: Más puntos primero
+            ->select(
+                'users.name as user_name',
+                'contest_registrations.team_name',
+                'leaderboard.points',
+                'leaderboard.problems_solved'
+            )
+            ->get();
+
+        $hallOfFame = $ranking->take(3);
+
+        // OJO: Retornamos la vista en la carpeta 'clasificacion', no 'concursos'
+        return view('clasificacion.show', compact('event', 'ranking', 'hallOfFame'));
     }
 }

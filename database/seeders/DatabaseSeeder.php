@@ -11,24 +11,27 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Primero crear roles y permisos
+        // 1. Roles y Permisos
         $this->call([
             RolesYPermisosSeeder::class,
         ]);
 
-        // Luego crear usuarios con datos
+        // 2. Datos principales
         $this->call([
-            TablaPosicionesSeeder::class,
-            ConcursoSeeder::class,
+            // TablaPosicionesSeeder::class,  <--- COMENTADO O BORRADO (Causaba el error)
+            ConcursoSeeder::class,            // Este crea Concursos + Leaderboard correctamente
             JuezSeeder::class,
         ]);
 
-        // Usuario administrador de prueba
+        // 3. Usuarios de prueba
+        $this->crearUsuariosManuales();
+    }
+
+    private function crearUsuariosManuales()
+    {
+        // Admin
         $admin = User::create([
             'name' => 'Admin',
             'email' => 'admin@codebattle.com',
@@ -37,7 +40,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
-        // Usuario juez de prueba
+        // Juez
         $juez = User::create([
             'name' => 'Juez Demo',
             'email' => 'juez@codebattle.com',
@@ -46,7 +49,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $juez->assignRole('juez');
 
-        // Usuario participante de prueba
+        // Usuario
         $user = User::create([
             'name' => 'Usuario Demo',
             'email' => 'user@codebattle.com',
