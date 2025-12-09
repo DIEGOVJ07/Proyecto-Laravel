@@ -11,6 +11,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminContestController;
 use App\Http\Controllers\Admin\JudgeController;
+use App\Http\Controllers\Admin\UserController;
 
 // ==========================================
 // PÁGINA PÚBLICA
@@ -65,11 +66,24 @@ Route::middleware('auth')->group(function () {
     
     // Blog
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-    Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
+    Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+    Route::get('/blog/crear/nuevo', [BlogController::class, 'create'])->name('blog.create')->middleware('can:create,App\Models\Post');
+    Route::post('/blog', [BlogController::class, 'store'])->name('blog.store')->middleware('can:create,App\Models\Post');
+    Route::post('/blog/posts/{post}/like', [BlogController::class, 'like'])->name('blog.like');
 });
 
 // ==========================================
-// ADMINISTRACIÓN (SOLO ADMIN)
+// SUPER ADMINISTRACIÓN (SOLO SUPER ADMIN)
+// ==========================================
+Route::middleware(['auth', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Gestión de Usuarios
+    Route::resource('users', UserController::class);
+    Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::post('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assign-role');
+});
+
+// ==========================================
+// ADMINISTRACIÓN (ADMIN Y SUPER ADMIN)
 // ==========================================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     

@@ -47,8 +47,15 @@ class RolesYPermisosSeeder extends Seeder
             
             // Permisos de Usuarios
             'ver-usuarios',
+            'crear-usuarios',
             'editar-usuarios',
             'eliminar-usuarios',
+            'gestionar-roles',
+            
+            // Permisos de Sistema (Solo Super Admin)
+            'configurar-sistema',
+            'ver-logs-auditoria',
+            'gestionar-admins',
             
             // Permisos de Perfil
             'ver-perfil',
@@ -61,11 +68,51 @@ class RolesYPermisosSeeder extends Seeder
 
         // Crear roles y asignar permisos
 
-        // ROL: Admin - Tiene todos los permisos
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        // ROL: Super Admin - Control total del sistema
+        $superAdminRole = Role::create(['name' => 'super_admin']);
+        $superAdminRole->givePermissionTo(Permission::all()); // TODOS los permisos
 
-        // ROL: Juez - Permisos limitados
+        // ROL: Admin - Gestión operativa sin permisos críticos
+        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo([
+            // Concursos
+            'ver-concursos',
+            'crear-concursos',
+            'editar-concursos',
+            'eliminar-concursos',
+            
+            // Jueces
+            'ver-jueces',
+            'crear-jueces',
+            'editar-jueces',
+            'eliminar-jueces',
+            'asignar-jueces',
+            
+            // Clasificación
+            'ver-clasificacion',
+            'editar-clasificacion',
+            
+            // Blog
+            'ver-blog',
+            'crear-blog',
+            'editar-blog',
+            'eliminar-blog',
+            
+            // Sedes
+            'ver-sedes',
+            'crear-sedes',
+            'editar-sedes',
+            'eliminar-sedes',
+            
+            // Usuarios (solo ver, sin modificar)
+            'ver-usuarios',
+            
+            // Perfil
+            'ver-perfil',
+            'editar-perfil',
+        ]);
+
+        // ROL: Juez - Permisos de evaluación
         $juezRole = Role::create(['name' => 'juez']);
         $juezRole->givePermissionTo([
             'ver-concursos',

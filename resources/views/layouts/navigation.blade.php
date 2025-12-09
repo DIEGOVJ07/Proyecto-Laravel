@@ -27,25 +27,33 @@
                             {{ __('Concursos') }}
                         </x-nav-link>
 
-                        @role('admin')
-                            {{-- SOLO ADMIN: Panel de Administración --}}
+                        {{-- SUPER ADMIN: Gestión de Usuarios (exclusivo) --}}
+                        @role('super_admin')
+                            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                                <i class="fas fa-users-cog mr-2 text-purple-400"></i>
+                                {{ __('Usuarios') }}
+                            </x-nav-link>
+                        @endrole
+
+                        {{-- ADMIN y SUPER ADMIN: Panel de Administración --}}
+                        @hasanyrole('admin|super_admin')
                             <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
                                 <i class="fas fa-shield-alt mr-2"></i>
                                 {{ __('Panel Admin') }}
                             </x-nav-link>
 
-                            {{-- SOLO ADMIN: Jueces --}}
+                            {{-- Jueces --}}
                             <x-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
                                 <i class="fas fa-gavel mr-2"></i>
                                 {{ __('Jueces') }}
                             </x-nav-link>
 
-                            {{-- SOLO ADMIN: Clasificación --}}
+                            {{-- Clasificación --}}
                             <x-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.index')">
                                 <i class="fas fa-chart-bar mr-2"></i>
                                 {{ __('Clasificación') }}
                             </x-nav-link>
-                        @endrole
+                        @endhasanyrole
                         
                         {{-- Mi Perfil - Visible para todos los autenticados --}}
                         <x-nav-link :href="route('profile.index')" :active="request()->routeIs('profile.index')">
@@ -75,8 +83,12 @@
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-400 bg-cb-card hover:text-gray-200 focus:outline-none transition ease-in-out duration-150">
                                 <div class="flex items-center space-x-2">
-                                    @role('admin')
+                                    @role('super_admin')
+                                        <i class="fas fa-shield-halved text-purple-400"></i>
+                                    @elserole('admin')
                                         <i class="fas fa-crown text-yellow-400"></i>
+                                    @elserole('juez')
+                                        <i class="fas fa-gavel text-blue-400"></i>
                                     @endrole
                                     <span>{{ Auth::user()->name }}</span>
                                 </div>

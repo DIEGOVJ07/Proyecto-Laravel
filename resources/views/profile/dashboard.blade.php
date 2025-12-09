@@ -45,10 +45,10 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div class="bg-cb-dark/50 p-6 rounded-xl border border-cb-border">
                         <div class="flex items-center justify-between mb-3">
-                            <i class="fas fa-code text-3xl text-blue-400"></i>
-                            <span class="text-4xl font-bold text-white">{{ $stats['problems_solved'] }}</span>
+                            <i class="fas fa-trophy text-3xl text-blue-400"></i>
+                            <span class="text-4xl font-bold text-white">{{ $stats['total_contests'] }}</span>
                         </div>
-                        <p class="text-gray-400">Problemas Resueltos</p>
+                        <p class="text-gray-400">Concursos Participados</p>
                     </div>
 
                     <div class="bg-cb-dark/50 p-6 rounded-xl border border-cb-border">
@@ -56,12 +56,12 @@
                             <i class="fas fa-award text-3xl text-yellow-400"></i>
                             <span class="text-4xl font-bold text-white">{{ $stats['contests_won'] }}</span>
                         </div>
-                        <p class="text-gray-400">Concursos Ganados</p>
+                        <p class="text-gray-400">Concursos Destacados</p>
                     </div>
 
                     <div class="bg-cb-dark/50 p-6 rounded-xl border border-cb-border">
                         <div class="flex items-center justify-between mb-3">
-                            <i class="fas fa-chart-line text-3xl text-cb-green"></i>
+                            <i class="fas fa-star text-3xl text-cb-green"></i>
                             <span class="text-4xl font-bold text-white">{{ number_format($stats['total_points']) }}</span>
                         </div>
                         <p class="text-gray-400">Puntos Totales</p>
@@ -100,11 +100,27 @@
 
                         <div class="flex items-start">
                             <div class="w-32 text-gray-400">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                Ubicación:
+                                <i class="fas fa-user-tag mr-2"></i>
+                                Rol:
                             </div>
-                            <div class="flex-1 text-white font-medium">
-                                México
+                            <div class="flex-1">
+                                @if($user->hasRole('super_admin'))
+                                    <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-shield-halved mr-1"></i> Super Admin
+                                    </span>
+                                @elseif($user->hasRole('admin'))
+                                    <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-crown mr-1"></i> Admin
+                                    </span>
+                                @elseif($user->hasRole('juez'))
+                                    <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-gavel mr-1"></i> Juez
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 bg-gray-500/10 text-gray-400 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-user mr-1"></i> Usuario
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -122,11 +138,11 @@
 
                         <div class="flex items-start">
                             <div class="w-32 text-gray-400">
-                                <i class="fas fa-fire mr-2"></i>
-                                Racha:
+                                <i class="fas fa-tasks mr-2"></i>
+                                Participaciones:
                             </div>
                             <div class="flex-1 text-white font-medium">
-                                7 días consecutivos
+                                {{ $stats['total_contests'] }} concursos
                             </div>
                         </div>
 
@@ -137,7 +153,7 @@
                             </div>
                             <div class="flex-1">
                                 <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-lg text-sm font-medium">
-                                    Activo
+                                    <i class="fas fa-circle text-green-400 text-xs mr-1"></i> Activo
                                 </span>
                             </div>
                         </div>
@@ -148,201 +164,174 @@
             {{-- 3. Estadísticas de Concursos --}}
             <div class="grid lg:grid-cols-2 gap-6">
                 
-                {{-- Concursos Ganados --}}
+                {{-- Concursos Destacados --}}
                 <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center">
                         <i class="fas fa-trophy text-yellow-400 mr-3"></i>
-                        Concursos Ganados
+                        Mejores Resultados
                     </h3>
 
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-medal text-yellow-400"></i>
+                    @if($wonContests->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($wonContests as $registration)
+                                <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border hover:border-cb-green/50 transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-medal text-yellow-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white font-semibold">{{ $registration->contest->name }}</h4>
+                                            <p class="text-gray-400 text-sm">
+                                                <i class="fas fa-calendar mr-1"></i>
+                                                {{ $registration->created_at->format('d M Y') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        @if($registration->score !== null)
+                                            <span class="text-xl font-bold text-cb-green">{{ $registration->score }}</span>
+                                            <p class="text-xs text-gray-400">puntos</p>
+                                        @else
+                                            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">Pendiente</span>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">Weekly Challenge #45</h4>
-                                    <p class="text-gray-400 text-sm">18 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-yellow-400 font-bold">🥇 1er Lugar</span>
+                            @endforeach
                         </div>
-
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-medal text-yellow-400"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">DP Sprint #11</h4>
-                                    <p class="text-gray-400 text-sm">10 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-gray-400 font-bold">🥈 2do Lugar</span>
+                    @else
+                        <div class="text-center py-12">
+                            <i class="fas fa-trophy text-6xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">Aún no tienes concursos destacados</p>
+                            <p class="text-sm text-gray-500 mt-2">¡Participa y logra buenos resultados!</p>
                         </div>
-
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-medal text-yellow-400"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">Algorithm Masters</h4>
-                                    <p class="text-gray-400 text-sm">02 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-orange-400 font-bold">🥉 3er Lugar</span>
-                        </div>
-                    </div>
+                    @endif
                 </div>
 
-                {{-- Concursos Perdidos / Participados --}}
+                {{-- Concursos Recientes --}}
                 <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center">
                         <i class="fas fa-list text-blue-400 mr-3"></i>
-                        Concursos Recientes
+                        Participaciones Recientes
                     </h3>
 
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-code text-blue-400"></i>
+                    @if($recentContests->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($recentContests as $registration)
+                                <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border hover:border-blue-500/50 transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-code text-blue-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white font-semibold">{{ $registration->contest->name }}</h4>
+                                            <p class="text-gray-400 text-sm">
+                                                <i class="fas fa-users mr-1"></i>
+                                                {{ $registration->team_name }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        @if($registration->score !== null)
+                                            <span class="text-lg font-bold text-white">{{ $registration->score }}</span>
+                                            <p class="text-xs text-gray-400">pts</p>
+                                        @else
+                                            <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">
+                                                En proceso
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">Weekly Challenge #46</h4>
-                                    <p class="text-gray-400 text-sm">25 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-blue-400 font-bold">5to Lugar</span>
+                            @endforeach
                         </div>
-
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-code text-blue-400"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">Graph Theory Challenge</h4>
-                                    <p class="text-gray-400 text-sm">23 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-gray-400 font-bold">12vo Lugar</span>
+                    @else
+                        <div class="text-center py-12">
+                            <i class="fas fa-clipboard-list text-6xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No has participado en concursos</p>
+                            <p class="text-sm text-gray-500 mt-2">¡Inscríbete en tu primer concurso!</p>
                         </div>
-
-                        <div class="flex items-center justify-between p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-code text-blue-400"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-semibold">Binary Tree Masters</h4>
-                                    <p class="text-gray-400 text-sm">20 Nov 2025</p>
-                                </div>
-                            </div>
-                            <span class="text-gray-400 font-bold">8vo Lugar</span>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 
-            {{-- 4. Insignias y Logros --}}
+            {{-- 4. Resumen de Equipos --}}
+            @if($recentContests->count() > 0)
             <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border">
                 <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                    <i class="fas fa-certificate text-cb-green mr-3"></i>
-                    Insignias y Logros
+                    <i class="fas fa-users text-cb-green mr-3"></i>
+                    Equipos Registrados
                 </h3>
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border hover:border-cb-green/50 transition-all duration-300">
-                        <i class="fas fa-fire text-yellow-500 text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">Racha de 7 días</p>
-                        <span class="text-xs text-cb-green">Desbloqueado</span>
-                    </div>
-                    
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border hover:border-cb-green/50 transition-all duration-300">
-                        <i class="fas fa-star text-blue-500 text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">50 Problemas</p>
-                        <span class="text-xs text-cb-green">Desbloqueado</span>
-                    </div>
-                    
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border hover:border-cb-green/50 transition-all duration-300">
-                        <i class="fas fa-medal text-cb-green text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">Primera Victoria</p>
-                        <span class="text-xs text-cb-green">Desbloqueado</span>
-                    </div>
-                    
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border opacity-40">
-                        <i class="fas fa-fire text-red-500 text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">100 Problemas</p>
-                        <span class="text-xs text-gray-500">Bloqueado</span>
-                    </div>
-                    
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border opacity-40">
-                        <i class="fas fa-brain text-purple-500 text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">Maestro DP</p>
-                        <span class="text-xs text-gray-500">Bloqueado</span>
-                    </div>
-                    
-                    <div class="bg-cb-dark/50 rounded-xl p-4 text-center border border-cb-border opacity-40">
-                        <i class="fas fa-chart-line text-pink-500 text-4xl mb-2"></i>
-                        <p class="text-sm text-gray-400">Ninja de Grafos</p>
-                        <span class="text-xs text-gray-500">Bloqueado</span>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($recentContests as $registration)
+                        <div class="bg-cb-dark/50 rounded-xl p-4 border border-cb-border hover:border-cb-green/50 transition-all">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h4 class="text-white font-semibold mb-1">{{ $registration->team_name }}</h4>
+                                    <p class="text-sm text-gray-400">{{ $registration->contest->name }}</p>
+                                </div>
+                                @if($registration->is_team_leader)
+                                    <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">
+                                        <i class="fas fa-crown"></i> Líder
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-400">
+                                    <i class="fas fa-user-friends mr-1"></i>
+                                    {{ $registration->current_members ?? $registration->team_size }} miembros
+                                </span>
+                                @if($registration->score !== null)
+                                    <span class="text-cb-green font-bold">{{ $registration->score }} pts</span>
+                                @else
+                                    <span class="text-blue-400">En curso</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
+            @endif
 
-            {{-- 5. Actividad Reciente --}}
+            {{-- 5. Información Adicional --}}
             <div class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border">
                 <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                    <i class="fas fa-history text-cb-green mr-3"></i>
-                    Actividad Reciente
+                    <i class="fas fa-chart-pie text-cb-green mr-3"></i>
+                    Resumen General
                 </h3>
                 
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-4 p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                        <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check-circle text-cb-green text-xl"></i>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-white mb-2">{{ $stats['total_contests'] }}</div>
+                        <p class="text-gray-400">Concursos Totales</p>
+                        <div class="mt-2 h-2 bg-cb-dark rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500" style="width: 100%"></div>
                         </div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-semibold">Resolviste "Two Sum Problem"</h4>
-                            <p class="text-gray-400 text-sm">En 45ms - Weekly Challenge #46</p>
-                        </div>
-                        <span class="text-gray-400 text-sm">25 Nov 2025</span>
                     </div>
-
-                    <div class="flex items-center space-x-4 p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                        <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check-circle text-cb-green text-xl"></i>
+                    
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-yellow-400 mb-2">{{ $stats['contests_won'] }}</div>
+                        <p class="text-gray-400">Resultados Destacados</p>
+                        <div class="mt-2 h-2 bg-cb-dark rounded-full overflow-hidden">
+                            <div class="h-full bg-yellow-500" style="width: {{ $stats['total_contests'] > 0 ? ($stats['contests_won'] / $stats['total_contests'] * 100) : 0 }}%"></div>
                         </div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-semibold">Resolviste "Longest Palindrome"</h4>
-                            <p class="text-gray-400 text-sm">En 72ms - Weekly Challenge #46</p>
-                        </div>
-                        <span class="text-gray-400 text-sm">25 Nov 2025</span>
                     </div>
-
-                    <div class="flex items-center space-x-4 p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                        <div class="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-clock text-yellow-400 text-xl"></i>
+                    
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-cb-green mb-2">{{ number_format($stats['total_points']) }}</div>
+                        <p class="text-gray-400">Puntos Acumulados</p>
+                        <div class="mt-2 h-2 bg-cb-dark rounded-full overflow-hidden">
+                            <div class="h-full bg-cb-green" style="width: {{ min(($stats['total_points'] / 100), 100) }}%"></div>
                         </div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-semibold">Tiempo límite en "Binary Tree Traversal"</h4>
-                            <p class="text-gray-400 text-sm">Graph Theory Challenge</p>
-                        </div>
-                        <span class="text-gray-400 text-sm">23 Nov 2025</span>
                     </div>
+                </div>
 
-                    <div class="flex items-center space-x-4 p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
-                        <div class="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-times-circle text-red-400 text-xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-semibold">Error en "Dynamic Programming Grid"</h4>
-                            <p class="text-gray-400 text-sm">DP Sprint #12</p>
-                        </div>
-                        <span class="text-gray-400 text-sm">22 Nov 2025</span>
+                <div class="mt-8 p-4 bg-cb-dark/50 rounded-lg border border-cb-border">
+                    <div class="flex items-center gap-3 text-gray-300">
+                        <i class="fas fa-info-circle text-blue-400"></i>
+                        <p class="text-sm">
+                            <strong class="text-white">Tip:</strong> Participa en más concursos para mejorar tu ranking y acumular puntos. 
+                            ¡La práctica constante te llevará al top!
+                        </p>
                     </div>
                 </div>
             </div>

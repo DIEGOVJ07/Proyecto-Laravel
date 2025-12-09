@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Judge;
 use App\Models\Contest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JudgeController extends Controller
 {
@@ -15,14 +16,14 @@ class JudgeController extends Controller
     public function index()
     {
         $judges = Judge::withCount('contests')
-                      ->orderBy('created_at', 'desc')
-                      ->paginate(10);
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
         $stats = [
             'total_judges' => Judge::count(),
             'active_judges' => Judge::where('is_active', true)->count(),
             'expert_judges' => Judge::where('certification_level', 'Expert')->count(),
-            'total_assignments' => \DB::table('contest_judge')->count(),
+            'total_assignments' => DB::table('contest_judge')->count(),
         ];
 
         return view('admin.jueces.index', compact('judges', 'stats'));

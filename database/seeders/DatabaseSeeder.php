@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             // TablaPosicionesSeeder::class,  <--- COMENTADO O BORRADO (Causaba el error)
             ConcursoSeeder::class,            // Este crea Concursos + Leaderboard correctamente
             JuezSeeder::class,
+            PostSeeder::class,                // Artículos del blog
         ]);
 
         // 3. Usuarios de prueba
@@ -31,7 +32,16 @@ class DatabaseSeeder extends Seeder
 
     private function crearUsuariosManuales()
     {
-        // Admin
+        // Super Admin - Control total del sistema
+        $superAdmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@codebattle.com',
+            'password' => Hash::make('superadmin123'),
+            'role' => 'super_admin',
+        ]);
+        $superAdmin->assignRole('super_admin');
+
+        // Admin - Gestión operativa
         $admin = User::create([
             'name' => 'Admin',
             'email' => 'admin@codebattle.com',
@@ -40,7 +50,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
-        // Juez
+        // Juez - Evaluación
         $juez = User::create([
             'name' => 'Juez Demo',
             'email' => 'juez@codebattle.com',
@@ -49,7 +59,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $juez->assignRole('juez');
 
-        // Usuario
+        // Usuario - Participante
         $user = User::create([
             'name' => 'Usuario Demo',
             'email' => 'user@codebattle.com',

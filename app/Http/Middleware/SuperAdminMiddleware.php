@@ -7,16 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class SuperAdminMiddleware
 {
     /**
      * Handle an incoming request.
-     * Permite acceso a admin y super_admin
+     * Solo permite acceso a usuarios con rol super_admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('super_admin'))) {
-            abort(403, 'No tienes permisos para acceder a esta sección.');
+        if (!Auth::check() || !Auth::user()->hasRole('super_admin')) {
+            abort(403, 'Acceso denegado. Se requieren privilegios de Super Administrador.');
         }
 
         return $next($request);

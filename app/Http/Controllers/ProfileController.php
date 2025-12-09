@@ -20,37 +20,35 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Estadísticas del usuario
-        $stats = [
-            'total_points' => $user->total_points ?? 4523,
-            'problems_solved' => $user->problems_solved ?? 89,
-            'contests_won' => $user->contests_won ?? 3,
-            'global_ranking' => $user->global_ranking ?? 247,
-        ];
-
-        // Si es administrador, mostrar vista de admin
-        if ($user->hasRole('admin')) {
-            // Obtener todos los concursos para el admin
-            $contests = Contest::withCount('registrations')
-                ->orderBy('start_date', 'desc')
-                ->get();
-
-            // Obtener todas las inscripciones recientes
-            $recentRegistrations = ContestRegistration::with(['user', 'contest'])
-                ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
-
-            return view('profile.admin', compact('user', 'stats', 'contests', 'recentRegistrations'));
-        }
-
-        // Vista normal para usuarios regulares
-        $myContests = ContestRegistration::where('user_id', $user->id)
+        // Obtener registros del usuario con sus concursos
+        $myRegistrations = ContestRegistration::where('user_id', $user->id)
             ->with('contest')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('profile.index', compact('user', 'stats', 'myContests'));
+        // Calcular estadísticas reales
+        $totalPoints = $user->leaderboard->points ?? 0;
+        $totalContests = $myRegistrations->count();
+        $contestsWon = $myRegistrations->where('score', '>=', 80)->count(); // Considerar ganado si score >= 80
+        $globalRanking = $user->leaderboard->rank ?? '-';
+
+        // Obtener concursos ganados (con mejor posición)
+        $wonContests = $myRegistrations
+            ->where('score', '>=', 80)
+            ->sortByDesc('score')
+            ->take(5);
+
+        // Obtener concursos recientes
+        $recentContests = $myRegistrations->take(5);
+
+        $stats = [
+            'total_points' => $totalPoints,
+            'total_contests' => $totalContests,
+            'contests_won' => $contestsWon,
+            'global_ranking' => $globalRanking,
+        ];
+
+        return view('profile.dashboard', compact('user', 'stats', 'wonContests', 'recentContests'));
     }
 
     /**
@@ -58,7 +56,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('profile.settings', [
             'user' => $request->user(),
         ]);
     }
