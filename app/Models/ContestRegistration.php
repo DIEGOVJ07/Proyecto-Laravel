@@ -10,6 +10,10 @@ class ContestRegistration extends Model
 {
     use HasFactory;
 
+    // 1. IMPORTANTE: Agregamos esto para evitar el error "Table registrations doesn't exist"
+    // Esto fuerza a Laravel a usar tu tabla real 'contest_registrations'
+    protected $table = 'contest_registrations';
+
     protected $fillable = [
         'user_id',
         'contest_id',
@@ -21,12 +25,21 @@ class ContestRegistration extends Model
         'team_leader_id',
         'is_team_leader',
         'status',
-        // NO incluyas team_size, team_members, leader_phone si ya no los usas
+        'team_size',
+        
+        // --- NUEVOS CAMPOS PARA CALIFICACIÓN ---
+        'score',          // Puntaje total
+        'score_details',  // Desglose JSON (Funcionalidad, Diseño...)
+        'feedback',       // Comentarios del juez
     ];
 
     protected $casts = [
         'is_public' => 'boolean',
         'is_team_leader' => 'boolean',
+        
+        // --- NUEVOS CASTS ---
+        'score' => 'integer',
+        'score_details' => 'array', // ¡CRUCIAL! Convierte el JSON de la BD a Array PHP automáticamente
     ];
 
     public function user()
@@ -46,6 +59,8 @@ class ContestRegistration extends Model
 
     public function members()
     {
+        // Verifica en tu migración 'create_team_members_table' si la llave foránea
+        // se llama 'contest_registration_id'. Si es así, esto está perfecto.
         return $this->hasMany(TeamMember::class, 'contest_registration_id');
     }
 

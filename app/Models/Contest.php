@@ -9,46 +9,25 @@ class Contest extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'description',
-        'status',
-        'difficulty',
-        'duration',
-        'participants',
-        'prize',
-        'languages',
-        'start_date',
-        'end_date',
-        'rules',
-        'requirements',
-        'min_team_members',
-        'max_team_members',
-    ];
+    protected $guarded = []; // Permite guardar todos los campos enviados
 
+    // AQUI LA SOLUCIÓN:
     protected $casts = [
-        'languages' => 'array',
-        'start_date' => 'date',
+        'languages' => 'array',  // <--- ¡CRUCIAL! Evita el error "Array to string conversion"
+        'start_date' => 'date',  // Para que Laravel maneje las fechas correctamente
         'end_date' => 'date',
-        'prize' => 'decimal:2',
-
     ];
+
+    // Relaciones
+    public function leaderboardParticipants()
+    {
+        return $this->belongsToMany(User::class, 'leaderboard', 'contest_id', 'user_id')
+                    ->withPivot('points', 'rank', 'problems_solved')
+                    ->withTimestamps();
+    }
 
     public function registrations()
     {
-        return $this->hasMany(ContestRegistration::class);
+        return $this->hasMany(ContestRegistration::class, 'contest_id');
     }
-
-
-    /**
- * Relación: Un concurso puede tener muchos jueces
- */
-public function judges()
-{
-    return $this->belongsToMany(Judge::class, 'contest_judge')
-                ->withPivot('role')
-                ->withTimestamps();
-}
-
-
 }

@@ -60,4 +60,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(ContestRegistration::class);
     }
+
+    // En app/Models/User.php
+
+
 }

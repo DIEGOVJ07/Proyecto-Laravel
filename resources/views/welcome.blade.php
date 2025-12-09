@@ -200,11 +200,11 @@
                                 </div>
 
                                 <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach ($contest->languages as $lang)
-                                        <span class="text-xs bg-cb-border text-gray-300 px-2 py-1 rounded-full">
-                                            {{ $lang }}
-                                        </span>
-                                    @endforeach
+          {{-- CÓDIGO CORREGIDO --}}
+{{-- Nota el "?? []" después de la variable --}}
+@foreach($contest->tags ?? [] as $tag)
+    <span class="badge">{{ $tag }}</span>
+@endforeach
                                 </div>
 
                                 @auth

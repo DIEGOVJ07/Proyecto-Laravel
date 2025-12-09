@@ -2,50 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Leaderboard;
-use App\Models\User;
+use App\Models\Contest;
+use App\Models\ContestRegistration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class LeaderboardController extends Controller
 {
     public function index()
     {
-        // Top 10 usuarios
-        $topUsers = Leaderboard::with('user')
-            ->orderBy('total_points', 'desc')
-            ->take(10)
+        // Obtener concursos finalizados
+        $eventosFinalizados = Contest::where('status', 'Finalizado')
+            ->withCount('leaderboardParticipants as participants_count')
+            ->orderBy('start_date', 'desc')
             ->get();
 
-        // Hall of Fame (Top 3)
-        $hallOfFame = $topUsers->take(3);
-
-        // Posición del usuario actual
-        $userPosition = null;
-        if (Auth::check()) {
-            $userPosition = Leaderboard::where('user_id', Auth::id())->first();
-            
-            // Si no existe, crear una entrada demo
-            if (!$userPosition) {
-                $userPosition = new Leaderboard([
-                    'user_id' => Auth::id(),
-                    'total_points' => 4523,
-                    'contests_won' => 3,
-                    'problems_solved' => 89,
-                    'global_ranking' => 247,
-                    'country_code' => 'MX',
-                    'trend' => 'up',
-                ]);
-            }
-        }
-
-        // Estadísticas generales
         $stats = [
-            'total_users' => User::count(),
-            'total_contests' => \App\Models\Contest::count(),
-            'active_today' => rand(150, 300),
+            'total_users' => \App\Models\User::count(),
+            'total_events_finished' => $eventosFinalizados->count(),
         ];
 
-        return view('clasificacion.index', compact('topUsers', 'hallOfFame', 'userPosition', 'stats'));
+        return view('clasificacion.index', compact('eventosFinalizados', 'stats'));
+    }
+
+    public function show($id)
+    {
+        $event = Contest::findOrFail($id);
+
+        // --- CONSULTA CORREGIDA CON LEFT JOIN ---
+        $ranking = DB::table('leaderboard')
+            ->join('users', 'leaderboard.user_id', '=', 'users.id') // INNER JOIN: Solo muestra usuarios que están en la tabla Leaderboard
+            
+            // CAMBIO CLAVE: Usamos LEFT JOIN para no perder participantes sin registro de equipo perfecto
+            ->leftJoin('contest_registrations', function($join) { 
+                $join->on('leaderboard.user_id', '=', 'contest_registrations.user_id')
+                     ->on('leaderboard.contest_id', '=', 'contest_registrations.contest_id');
+            })
+            
+            ->where('leaderboard.contest_id', $id)
+            ->orderByDesc('leaderboard.points')
+            ->orderByDesc('leaderboard.problems_solved')
+            ->select(
+                'users.name as user_name',
+                'contest_registrations.team_name', // Será NULL si no hay registro
+                'leaderboard.points',
+                'leaderboard.problems_solved'
+            )
+            ->get();
+
+        $hallOfFame = $ranking->take(3);
+
+        // Variables auxiliares
+        $isRegistered = false;
+        $registration = null;
+
+        if (Auth::check()) {
+            $registration = ContestRegistration::where('user_id', Auth::id())
+                ->where('contest_id', $id)
+                ->first();
+            $isRegistered = $registration !== null;
+        }
+
+        return view('clasificacion.show', compact(
+            'event', 
+            'ranking', 
+            'hallOfFame', 
+            'isRegistered', 
+            'registration'
+        ));
     }
 }
