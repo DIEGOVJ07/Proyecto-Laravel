@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Contest;
 use App\Models\ContestRegistration;
+use App\Models\Leaderboard; // <--- IMPORTANTE: Para que el ranking funcione
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContestRecognitionMail;
 
 class AdminContestController extends Controller
 {
@@ -14,7 +17,6 @@ class AdminContestController extends Controller
      */
     public function index()
     {
-        // Obtenemos concursos y contamos las relaciones automáticamente
         $contests = Contest::withCount('registrations')
             ->orderBy('start_date', 'desc')
             ->paginate(10);
@@ -23,15 +25,13 @@ class AdminContestController extends Controller
     }
 
     /**
-     * Ver equipos participantes de un concurso
+     * Ver equipos participantes
      */
     public function teams($id)
     {
-        // ADAPTACIÓN CRÍTICA:
-        // Cargamos 'teamLeader' y 'members.user' para que la vista no falle al mostrar nombres.
         $contest = Contest::with([
-            'registrations.teamLeader',    // Para el líder
-            'registrations.members.user'   // Para los miembros del equipo
+            'registrations.teamLeader',
+            'registrations.members.user'
         ])->findOrFail($id);
         
         return view('admin.concursos.teams', compact('contest'));
@@ -72,21 +72,19 @@ class AdminContestController extends Controller
     }
 
     /**
-     * Eliminar equipo de un concurso
+     * Eliminar equipo
      */
     public function deleteTeam($contestId, $registrationId)
     {
-        // Buscamos el concurso primero para asegurar consistencia
         $contest = Contest::findOrFail($contestId);
-
-        // Buscamos el registro dentro de ese concurso
         $registration = $contest->registrations()->findOrFail($registrationId);
+        
+        // Limpiamos también el leaderboard si existía
+        Leaderboard::where('contest_id', $contestId)
+            ->where('user_id', $registration->user_id)
+            ->delete();
 
         $registration->delete();
-
-        // NOTA: Eliminé la línea decrement('participants') porque al usar withCount()
-        // en el index, Laravel cuenta las filas reales. Tener una columna contador manual
-        // suele causar errores si se desincroniza.
 
         return redirect()->back()->with('success', 'Equipo eliminado exitosamente');
     }
@@ -108,13 +106,13 @@ class AdminContestController extends Controller
     public function destroy($id)
     {
         $contest = Contest::findOrFail($id);
-        $contest->delete(); // Esto borrará en cascada los registros si tienes configurada la BD así
+        $contest->delete();
 
         return redirect()->route('admin.contests.index')->with('success', 'Concurso eliminado exitosamente');
     }
 
     /**
-     * Marcar equipo como clasificado (Manual)
+     * Clasificar manualmente (Botón verde "Aprobar")
      */
     public function qualify($contestId, $registrationId)
     {
@@ -122,19 +120,24 @@ class AdminContestController extends Controller
             ->where('id', $registrationId)
             ->firstOrFail();
 
-        // Si se clasifica manualmente, le damos el mínimo de aprobación si tiene 0
         $updates = ['status' => 'qualified'];
         if ($registration->score < 50) {
-            $updates['score'] = 50; // Asignar puntaje base para consistencia
+            $updates['score'] = 50; 
         }
 
         $registration->update($updates);
+
+        // --- ACTUALIZAR RANKING PÚBLICO ---
+        Leaderboard::updateOrCreate(
+            ['contest_id' => $contestId, 'user_id' => $registration->user_id],
+            ['points' => $registration->score ?? 50, 'problems_solved' => 1]
+        );
 
         return redirect()->back()->with('success', 'Equipo clasificado exitosamente');
     }
 
     /**
-     * Desclasificar equipo (Manual)
+     * Desclasificar manualmente
      */
     public function disqualify($contestId, $registrationId)
     {
@@ -142,20 +145,25 @@ class AdminContestController extends Controller
             ->where('id', $registrationId)
             ->firstOrFail();
 
-        $registration->update(['status' => 'registered']); // O 'disqualified'
+        $registration->update(['status' => 'registered']);
+
+        // --- ELIMINAR DEL RANKING PÚBLICO ---
+        Leaderboard::where('contest_id', $contestId)
+            ->where('user_id', $registration->user_id)
+            ->delete();
 
         return redirect()->back()->with('success', 'Equipo desclasificado');
     }
 
     /**
-     * ----------------------------------------------------------------
-     * NUEVO MÉTODO: Calificar Equipo (Grade Team)
-     * ----------------------------------------------------------------
-     * Este método procesa el formulario del Modal de Alpine.js
+     * Calificar Equipo (Modal de Juez)
+     * - Guarda nota en BD
+     * - Actualiza Leaderboard
+     * - Envía Correo de Reconocimiento
      */
     public function gradeTeam(Request $request, $contestId, $registrationId)
     {
-        // 1. Validar los puntajes
+        // 1. Validar
         $validated = $request->validate([
             'criteria_functionality' => 'required|integer|min:0|max:40',
             'criteria_code'          => 'required|integer|min:0|max:30',
@@ -163,20 +171,18 @@ class AdminContestController extends Controller
             'feedback'               => 'nullable|string|max:1000',
         ]);
 
-        // 2. Obtener el registro
         $registration = ContestRegistration::where('contest_id', $contestId)
             ->where('id', $registrationId)
             ->firstOrFail();
 
-        // 3. Calcular total
+        // 2. Calcular Totales
         $totalScore = $validated['criteria_functionality'] + 
                       $validated['criteria_code'] + 
                       $validated['criteria_design'];
 
-        // 4. Regla de Negocio: Si >= 50 Clasifica, si no, se mantiene/descalifica
         $newStatus = $totalScore >= 50 ? 'qualified' : 'disqualified';
 
-        // 5. Guardar (Gracias a que agregamos 'score_details' al $fillable y $casts del modelo)
+        // 3. Guardar en Registro (Base de datos interna)
         $registration->update([
             'score' => $totalScore,
             'score_details' => [
@@ -188,8 +194,52 @@ class AdminContestController extends Controller
             'status' => $newStatus
         ]);
 
-        // 6. Mensaje de retorno
-        $statusMsg = $newStatus == 'qualified' ? '¡Clasificado!' : 'No alcanzó el puntaje mínimo.';
+        // 4. ACTUALIZAR RANKING PÚBLICO (Leaderboard)
+        // Esto soluciona que la tabla de clasificación salga en ceros
+        if ($newStatus == 'qualified') {
+            Leaderboard::updateOrCreate(
+                ['contest_id' => $contestId, 'user_id' => $registration->user_id],
+                [
+                    'points' => $totalScore,
+                    'problems_solved' => ($totalScore > 0 ? 1 : 0) // Lógica simple para desempate
+                ]
+            );
+        } else {
+            // Si reprueba, lo sacamos del leaderboard
+            Leaderboard::where('contest_id', $contestId)
+                ->where('user_id', $registration->user_id)
+                ->delete();
+        }
+
+        // 5. ENVIAR CORREO DE RECONOCIMIENTO
+        // Solo enviamos si clasifica
+        if ($newStatus == 'qualified') {
+            try {
+                // Calcular posición actual
+                $rankingIds = Leaderboard::where('contest_id', $contestId)
+                                ->orderByDesc('points')
+                                ->pluck('user_id')
+                                ->toArray();
+                
+                $position = array_search($registration->user_id, $rankingIds) + 1;
+                $organizador = auth()->user()->name;
+                $lider = $registration->teamLeader; // Relación definida en el modelo
+
+                if($lider) {
+                    Mail::to($lider->email)->send(new ContestRecognitionMail(
+                        $lider, 
+                        $registration->contest, 
+                        $position, 
+                        $organizador
+                    ));
+                }
+            } catch (\Exception $e) {
+                // Si falla el correo (ej. sin internet), no detenemos el proceso, solo logueamos
+                \Log::error("Error enviando reconocimiento: " . $e->getMessage());
+            }
+        }
+
+        $statusMsg = $newStatus == 'qualified' ? '¡Clasificado y correo enviado!' : 'No alcanzó el puntaje mínimo.';
         
         return back()->with('success', "Equipo calificado con {$totalScore} puntos. {$statusMsg}");
     }

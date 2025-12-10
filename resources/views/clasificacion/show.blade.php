@@ -19,10 +19,34 @@
                     </h1>
                 </div>
 
-                <a href="{{ route('leaderboard.index') }}" class="px-4 py-2 border border-[#2c3240] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition text-sm font-medium flex items-center gap-2 bg-[#151a25]">
-                    <i class="fas fa-arrow-left"></i> Volver a Torneos
-                </a>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    {{-- BOTÓN CERTIFICADO (Visible si el usuario está registrado, clasificado y el evento terminó) --}}
+                    @if(isset($isRegistered) && $isRegistered && isset($registration) && $registration->status === 'qualified')
+                        <form action="{{ route('contests.certificate', $event->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-5 py-2 rounded-lg bg-[#10b981] hover:bg-[#059669] text-white text-sm font-bold shadow-lg shadow-[#10b981]/20 flex items-center gap-2 transition transform hover:scale-105">
+                                <i class="fas fa-certificate"></i> Obtener Certificado
+                            </button>
+                        </form>
+                    @endif
+
+                    <a href="{{ route('leaderboard.index') }}" class="px-4 py-2 border border-[#2c3240] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition text-sm font-medium flex items-center gap-2 bg-[#151a25]">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
+
+            {{-- MENSAJES FLASH --}}
+            @if(session('success'))
+                <div class="bg-[#10b981]/10 border border-[#10b981] text-[#10b981] px-4 py-3 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i> {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-times-circle"></i> {{ session('error') }}
+                </div>
+            @endif
 
             {{-- 2. HALL OF FAME (TOP 3 EQUIPOS) --}}
             @if($hallOfFame->count() > 0)
@@ -38,12 +62,10 @@
                             </div>
                             
                             <h4 class="text-xl font-bold text-white truncate mb-1">{{ $entry->team_name }}</h4>
-                            {{-- Lee el nombre del líder desde la relación teamLeader --}}
-                            <p class="text-xs text-gray-500 mb-4">Líder: {{ $entry->teamLeader->name ?? 'N/A' }}</p>
+                            <p class="text-xs text-gray-500 mb-4">Líder: {{ $entry->user_name ?? $entry->teamLeader->name ?? 'N/A' }}</p>
                             
                             <div class="inline-block bg-[#0f111a] rounded-lg px-4 py-2 border border-[#2c3240]">
-                                {{-- Lee el score desde la columna score --}}
-                                <p class="text-[#10b981] font-mono font-bold text-lg">{{ number_format($entry->score) }} <span class="text-xs text-gray-500">PTS</span></p>
+                                <p class="text-[#10b981] font-mono font-bold text-lg">{{ number_format($entry->score ?? $entry->points) }} <span class="text-xs text-gray-500">PTS</span></p>
                             </div>
                         </div>
                     @endforeach
@@ -69,12 +91,12 @@
                                 <th class="px-6 py-4">Nombre del Equipo</th>
                                 <th class="px-6 py-4">Líder / Integrante</th>
                                 <th class="px-6 py-4 text-right">Puntos</th>
-                                <th class="px-6 py-4 text-right">Estado</th> {{-- Cambiado a Estado --}}
+                                <th class="px-6 py-4 text-right">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#2c3240] text-sm text-gray-300">
                             @foreach($ranking as $index => $entry)
-                                <tr class="hover:bg-[#2c3240]/30 transition group">
+                                <tr class="hover:bg-[#2c3240]/30 transition group {{ (isset($registration) && $registration->id == $entry->id) ? 'bg-[#10b981]/10' : '' }}">
                                     {{-- Rango --}}
                                     <td class="px-6 py-4 font-mono">
                                         @if($index < 3)
@@ -87,27 +109,32 @@
                                     {{-- Equipo --}}
                                     <td class="px-6 py-4 font-bold text-white group-hover:text-[#10b981] transition-colors">
                                         {{ $entry->team_name }}
+                                        @if(isset($registration) && $registration->id == $entry->id)
+                                            <span class="ml-2 text-[10px] bg-[#10b981] text-white px-1.5 py-0.5 rounded">TÚ</span>
+                                        @endif
                                     </td>
 
                                     {{-- Usuario --}}
                                     <td class="px-6 py-4 text-gray-400 text-xs">
-                                        {{ $entry->teamLeader->name ?? 'N/A' }}
+                                        {{ $entry->teamLeader->name ?? $entry->user_name ?? 'N/A' }}
                                     </td>
 
                                     {{-- Puntos --}}
                                     <td class="px-6 py-4 text-right">
                                         <span class="text-[#10b981] font-mono font-bold text-base">
-                                            {{ number_format($entry->score) }}
+                                            {{ number_format($entry->score ?? $entry->points) }}
                                         </span>
                                     </td>
 
                                     {{-- Estado --}}
                                     <td class="px-6 py-4 text-right">
-                                        <span class="text-[10px] font-bold px-2 py-1 rounded border 
-                                            @if($entry->status == 'qualified') border-[#10b981] text-[#10b981] 
-                                            @else border-gray-600 text-gray-400 @endif">
-                                            {{ $entry->status }}
-                                        </span>
+                                        @if(isset($entry->status))
+                                            <span class="text-[10px] font-bold px-2 py-1 rounded border 
+                                                @if($entry->status == 'qualified') border-[#10b981] text-[#10b981] 
+                                                @else border-gray-600 text-gray-400 @endif">
+                                                {{ $entry->status == 'qualified' ? 'CLASIFICADO' : 'REGISTRADO' }}
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

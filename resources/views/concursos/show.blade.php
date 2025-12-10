@@ -9,7 +9,6 @@
                     {{-- Badges de Estado y Dificultad --}}
                     <div class="flex items-center gap-2">
                         @if($event->status === 'Activo')
-                            {{-- Badge Activo: Fondo Verde Sólido --}}
                             <span class="px-3 py-1 rounded-full border border-[#10b981] bg-[#10b981] text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.4)]">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Activo
                             </span>
@@ -120,9 +119,10 @@
                 </div>
 
                 {{-- COLUMNA DERECHA (1/3) - TARJETA DE ACCIÓN --}}
-                <div>
+                <div class="lg:col-span-1">
                     <div class="bg-[#151a25] border border-[#2c3240] rounded-xl p-8 sticky top-8 h-fit shadow-xl">
                         
+                        {{-- IF PRINCIPAL: ESTADO ACTIVO O PRÓXIMAMENTE --}}
                         @if($event->status === 'Activo' || $event->status === 'Próximamente')
                             
                             @if($isRegistered)
@@ -177,7 +177,6 @@
                                         <label for="is_public" class="text-xs text-gray-400 cursor-pointer select-none">Hacer equipo público</label>
                                     </div>
 
-                                    {{-- BOTÓN VERDE BRILLANTE --}}
                                     <button type="submit" class="w-full bg-[#10b981] hover:bg-[#059669] text-white font-bold py-3.5 rounded-lg transition-all duration-200 shadow-lg shadow-[#10b981]/20 text-sm uppercase tracking-wide">
                                         Inscribirse Ahora
                                     </button>
@@ -185,18 +184,36 @@
                             @endif
 
                         @else
-                            {{-- ESTADO: FINALIZADO --}}
+                            {{-- ELSE PRINCIPAL: ESTADO FINALIZADO --}}
                             <div class="py-8 text-center">
-                                <div class="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto text-4xl mb-6 text-gray-500 border border-gray-700">
+                                <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto text-4xl mb-6 text-gray-600 border-2 border-gray-700">
                                     <i class="fas fa-flag-checkered"></i>
                                 </div>
                                 <h3 class="text-xl font-bold text-white mb-2">Finalizado</h3>
-                                <p class="text-gray-500 text-sm mb-6">El evento ha concluido.</p>
+                                <p class="text-gray-400 text-sm mb-6">El evento ha concluido.</p>
                                 
-                                {{-- ENLACE AL RANKING --}}
-                                <a href="{{ route('leaderboard.show', $event->id) }}" class="w-full block py-3 bg-[#2c3240] hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition text-center border border-gray-600 hover:border-gray-500">
-                                    Ver Resultados &darr;
+                                {{-- Botón para ver Ranking --}}
+                                <a href="{{ route('leaderboard.show', $event->id) }}" class="w-full block py-3 bg-[#2c3240] hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition text-center border border-gray-600 mb-3">
+                                    Ver Ranking Oficial &darr;
                                 </a>
+
+                                {{-- LÓGICA DEL CERTIFICADO --}}
+                                @if($isRegistered && optional($registration)->status === 'qualified')
+                                    <form action="{{ route('contests.certificate', $event->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full py-3 bg-[#10b981]/20 hover:bg-[#10b981]/30 text-[#10b981] border border-[#10b981] rounded-lg text-sm font-bold transition text-center flex items-center justify-center gap-2 group">
+                                            <i class="fas fa-certificate group-hover:scale-110 transition-transform"></i>
+                                            Obtener Certificado
+                                        </button>
+                                    </form>
+                                    <p class="text-[10px] text-gray-500 mt-2">
+                                        Se enviará a: {{ Auth::user()->email }}
+                                    </p>
+                                @elseif($isRegistered && optional($registration)->status !== 'qualified')
+                                    <div class="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                        <p class="text-xs text-red-400">Tu equipo no alcanzó la clasificación para obtener certificado.</p>
+                                    </div>
+                                @endif
                             </div>
                         @endif
                     </div>
