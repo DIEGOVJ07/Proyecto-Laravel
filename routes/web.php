@@ -29,7 +29,8 @@ Route::middleware('guest')->group(function () {
 // ==========================================
 // USUARIOS AUTENTICADOS (GENERAL)
 // ==========================================
-Route::middleware('auth')->group(function () {
+// ↓↓↓ AQUÍ AGREGAMOS 'verified' PARA OBLIGAR A CONFIRMAR EMAIL ↓↓↓
+Route::middleware(['auth', 'verified'])->group(function () {
     
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -50,9 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('contests.register');
     Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('contests.cancel');
     
-    // --- RUTA DE CERTIFICADO (MOVIDA AQUÍ PARA QUE FUNCIONE) ---
+    // --- RUTA DE CERTIFICADO ---
     Route::post('/concursos/{id}/certificado', [ContestController::class, 'requestCertificate'])->name('contests.certificate');
-    // -----------------------------------------------------------
+    // ---------------------------
 
     // Gestión de Equipos (Participante)
     Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('teams.search');
@@ -79,7 +80,7 @@ Route::middleware('auth')->group(function () {
 // ==========================================
 // SUPER ADMINISTRACIÓN (SOLO SUPER ADMIN)
 // ==========================================
-Route::middleware(['auth', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión de Usuarios
     Route::resource('users', UserController::class);
     Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
@@ -90,7 +91,7 @@ Route::middleware(['auth', 'super_admin'])->prefix('admin')->name('admin.')->gro
 // GESTIÓN Y ADMINISTRACIÓN (ADMIN, SUPER_ADMIN Y JUEZ)
 // ==========================================
 // Permitimos entrar a 'admin', 'super_admin' O 'juez' usando el middleware de roles de Spatie
-Route::middleware(['auth', 'role:admin|super_admin|juez'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|super_admin|juez'])->prefix('admin')->name('admin.')->group(function () {
     
     // -----------------------------------------------------------
     // 1. RUTAS COMPARTIDAS (ADMIN, SUPER_ADMIN Y JUEZ)
