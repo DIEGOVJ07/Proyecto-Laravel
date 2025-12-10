@@ -161,7 +161,7 @@ class AdminContestController extends Controller
      * - Actualiza Leaderboard
      * - Envía Correo de Reconocimiento
      */
-    public function gradeTeam(Request $request, $contestId, $registrationId)
+    public function gradeTeam(Request $request, $contest, $registration)
     {
         // 1. Validar
         $validated = $request->validate([
@@ -171,8 +171,8 @@ class AdminContestController extends Controller
             'feedback'               => 'nullable|string|max:1000',
         ]);
 
-        $registration = ContestRegistration::where('contest_id', $contestId)
-            ->where('id', $registrationId)
+        $registration = ContestRegistration::where('contest_id', $contest)
+            ->where('id', $registration)
             ->firstOrFail();
 
         // 2. Calcular Totales
@@ -198,7 +198,7 @@ class AdminContestController extends Controller
         // Esto soluciona que la tabla de clasificación salga en ceros
         if ($newStatus == 'qualified') {
             Leaderboard::updateOrCreate(
-                ['contest_id' => $contestId, 'user_id' => $registration->user_id],
+                ['contest_id' => $contest, 'user_id' => $registration->user_id],
                 [
                     'points' => $totalScore,
                     'problems_solved' => ($totalScore > 0 ? 1 : 0) // Lógica simple para desempate
@@ -206,7 +206,7 @@ class AdminContestController extends Controller
             );
         } else {
             // Si reprueba, lo sacamos del leaderboard
-            Leaderboard::where('contest_id', $contestId)
+            Leaderboard::where('contest_id', $contest)
                 ->where('user_id', $registration->user_id)
                 ->delete();
         }
@@ -216,7 +216,7 @@ class AdminContestController extends Controller
         if ($newStatus == 'qualified') {
             try {
                 // Calcular posición actual
-                $rankingIds = Leaderboard::where('contest_id', $contestId)
+                $rankingIds = Leaderboard::where('contest_id', $contest)
                                 ->orderByDesc('points')
                                 ->pluck('user_id')
                                 ->toArray();
