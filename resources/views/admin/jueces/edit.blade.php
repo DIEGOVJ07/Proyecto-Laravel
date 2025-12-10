@@ -5,7 +5,7 @@
                 <i class="fas fa-edit text-cb-green mr-2"></i>
                 Editar Juez: {{ $judge->name }}
             </h2>
-            <a href="{{ route('admin.judges.index') }}" class="px-4 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
+            <a href="{{ route('admin.jueces.index') }}" class="px-4 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -15,7 +15,7 @@
     <div class="py-8">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
-                <form method="POST" action="{{ route('admin.judges.update', $judge) }}" class="space-y-6">
+                <form method="POST" action="{{ route('admin.jueces.update', $judge) }}" class="space-y-6">
                     @csrf
                     @method('PUT')
 
@@ -146,7 +146,7 @@
 
                     {{-- Botones --}}
                     <div class="flex items-center justify-end space-x-4 pt-6 border-t border-cb-border">
-                        <a href="{{ route('admin.judges.index') }}" class="px-6 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
+                        <a href="{{ route('admin.jueces.index') }}" class="px-6 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
                             Cancelar
                         </a>
                         <button type="submit" class="px-6 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">

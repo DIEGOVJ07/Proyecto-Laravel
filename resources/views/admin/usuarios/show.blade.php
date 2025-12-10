@@ -7,12 +7,12 @@
             </h2>
             <div class="flex gap-3">
                 @if(!$user->hasRole('super_admin'))
-                    <a href="{{ route('admin.users.edit', $user) }}" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-500 transition-all text-sm font-medium">
+                    <a href="{{ route('admin.usuarios.edit', $user) }}" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-500 transition-all text-sm font-medium">
                         <i class="fas fa-edit mr-2"></i>
                         Editar
                     </a>
                 @endif
-                <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all text-sm font-medium">
+                <a href="{{ route('admin.usuarios.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all text-sm font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Volver
                 </a>

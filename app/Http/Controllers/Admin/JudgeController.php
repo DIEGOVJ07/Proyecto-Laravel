@@ -58,7 +58,7 @@ class JudgeController extends Controller
 
         Judge::create($validated);
 
-        return redirect()->route('admin.judges.index')
+        return redirect()->route('admin.jueces.index')
                         ->with('success', 'Juez creado exitosamente');
     }
 
@@ -91,7 +91,7 @@ class JudgeController extends Controller
 
         $judge->update($validated);
 
-        return redirect()->route('admin.judges.index')
+        return redirect()->route('admin.jueces.index')
                         ->with('success', 'Juez actualizado exitosamente');
     }
 
@@ -102,7 +102,7 @@ class JudgeController extends Controller
     {
         $judge->delete();
 
-        return redirect()->route('admin.judges.index')
+        return redirect()->route('admin.jueces.index')
                         ->with('success', 'Juez eliminado exitosamente');
     }
 

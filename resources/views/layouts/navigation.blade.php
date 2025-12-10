@@ -29,7 +29,7 @@
 
                         {{-- Clasificación --}}
                         @can('ver-clasificacion')
-                            <x-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.*')">
+                            <x-nav-link :href="route('clasificacion.index')" :active="request()->routeIs('clasificacion.*')">
                                 <i class="fas fa-chart-bar mr-2"></i>
                                 {{ __('Clasificación') }}
                             </x-nav-link>
@@ -45,7 +45,7 @@
 
                         {{-- Sedes --}}
                         @can('ver-sedes')
-                            <x-nav-link :href="route('venues.index')" :active="request()->routeIs('venues.index')">
+                            <x-nav-link :href="route('sedes.index')" :active="request()->routeIs('sedes.index')">
                                 <i class="fas fa-map-marker-alt mr-2"></i>
                                 {{ __('Sedes') }}
                             </x-nav-link>
@@ -57,7 +57,7 @@
                         
                         {{-- SUPER ADMIN: Gestión de Usuarios (exclusivo) --}}
                         @role('super_admin')
-                            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            <x-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.usuarios.*')">
                                 <i class="fas fa-users-cog mr-2 text-purple-400"></i>
                                 {{ __('Usuarios') }}
                             </x-nav-link>
@@ -65,12 +65,12 @@
 
                         {{-- ADMIN y SUPER ADMIN: Panel de Administración --}}
                         @hasanyrole('admin|super_admin')
-                            <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
+                            <x-nav-link :href="route('admin.concursos.index')" :active="request()->routeIs('admin.concursos.*')">
                                 <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                                 {{ __('Panel Admin') }}
                             </x-nav-link>
 
-                            <x-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
+                            <x-nav-link :href="route('admin.jueces.index')" :active="request()->routeIs('admin.jueces.*')">
                                 <i class="fas fa-gavel mr-2"></i>
                                 {{ __('Jueces') }}
                             </x-nav-link>
@@ -78,7 +78,7 @@
 
                         {{-- Panel JUEZ (Solo para jueces) --}}
                         @role('juez')
-                            <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
+                            <x-nav-link :href="route('admin.concursos.index')" :active="request()->routeIs('admin.concursos.*')">
                                 <i class="fas fa-gavel mr-2 text-blue-400"></i>
                                 {{ __('Panel de Juez') }}
                             </x-nav-link>
@@ -126,7 +126,7 @@
                                 <div class="block px-4 py-2 text-xs text-gray-500">
                                     {{ __('Administración') }}
                                 </div>
-                                <x-dropdown-link :href="route('admin.contests.index')">
+                                <x-dropdown-link :href="route('admin.concursos.index')">
                                     <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                                     <span class="text-gray-300">{{ __('Panel de Control') }}</span>
                                 </x-dropdown-link>
@@ -138,7 +138,7 @@
                                 <div class="block px-4 py-2 text-xs text-gray-500">
                                     {{ __('Gestión') }}
                                 </div>
-                                <x-dropdown-link :href="route('admin.contests.index')">
+                                <x-dropdown-link :href="route('admin.concursos.index')">
                                     <i class="fas fa-gavel mr-2 text-blue-400"></i>
                                     <span class="text-gray-300">{{ __('Panel de Juez') }}</span>
                                 </x-dropdown-link>
@@ -216,7 +216,7 @@
                 @endcan
 
                 @can('ver-clasificacion')
-                <x-responsive-nav-link :href="route('leaderboard.index')" :active="request()->routeIs('leaderboard.*')">
+                <x-responsive-nav-link :href="route('clasificacion.index')" :active="request()->routeIs('clasificacion.*')">
                     <i class="fas fa-chart-bar mr-2"></i>
                     {{ __('Clasificación') }}
                 </x-responsive-nav-link>
@@ -230,7 +230,7 @@
                 @endcan
 
                 @can('ver-sedes')
-                <x-responsive-nav-link :href="route('venues.index')" :active="request()->routeIs('venues.index')">
+                <x-responsive-nav-link :href="route('sedes.index')" :active="request()->routeIs('sedes.index')">
                     <i class="fas fa-map-marker-alt mr-2"></i>
                     {{ __('Sedes') }}
                 </x-responsive-nav-link>
@@ -240,12 +240,12 @@
                 @role('admin')
                     <div class="border-t border-gray-700 my-2 pt-2">
                         <div class="px-4 text-xs text-gray-500 uppercase font-bold">Admin</div>
-                        <x-responsive-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
+                        <x-responsive-nav-link :href="route('admin.concursos.index')" :active="request()->routeIs('admin.concursos.*')">
                             <i class="fas fa-shield-alt mr-2 text-yellow-400"></i>
                             {{ __('Panel Admin') }}
                         </x-responsive-nav-link>
 
-                        <x-responsive-nav-link :href="route('admin.judges.index')" :active="request()->routeIs('admin.judges.*')">
+                        <x-responsive-nav-link :href="route('admin.jueces.index')" :active="request()->routeIs('admin.jueces.*')">
                             <i class="fas fa-gavel mr-2"></i>
                             {{ __('Jueces') }}
                         </x-responsive-nav-link>
@@ -256,7 +256,7 @@
                 @role('juez')
                     <div class="border-t border-gray-700 my-2 pt-2">
                         <div class="px-4 text-xs text-gray-500 uppercase font-bold">Gestión</div>
-                        <x-responsive-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.*')">
+                        <x-responsive-nav-link :href="route('admin.concursos.index')" :active="request()->routeIs('admin.concursos.*')">
                             <i class="fas fa-gavel mr-2 text-blue-400"></i>
                             {{ __('Panel de Juez') }}
                         </x-responsive-nav-link>

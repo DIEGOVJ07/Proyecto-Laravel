@@ -91,7 +91,7 @@
                     <p class="text-gray-400">¿Te invitaron a un equipo? Ingresa el código de 5 dígitos</p>
                 </div>
 
-                <form method="POST" action="{{ route('teams.search') }}" class="max-w-md mx-auto">
+                <form method="POST" action="{{ route('equipos.search') }}" class="max-w-md mx-auto">
                     @csrf
                     <div class="flex gap-3">
                         <input type="text" 
@@ -194,7 +194,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <form method="POST" action="{{ route('teams.search') }}">
+                                        <form method="POST" action="{{ route('equipos.search') }}">
                                             @csrf
                                             <input type="hidden" name="team_code" value="{{ $registration->team_code }}">
                                             <button type="submit" class="px-4 py-2 bg-cb-green/10 hover:bg-cb-green/20 text-cb-green border border-cb-green rounded-lg transition text-sm font-medium">

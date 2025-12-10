@@ -5,7 +5,7 @@
                 <i class="fas fa-users-cog mr-2 text-purple-400"></i>
                 Gestión de Usuarios
             </h2>
-            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-cb-green text-white rounded-lg hover:bg-cb-green/80 transition-all text-sm font-medium">
+            <a href="{{ route('admin.usuarios.create') }}" class="px-4 py-2 bg-cb-green text-white rounded-lg hover:bg-cb-green/80 transition-all text-sm font-medium">
                 <i class="fas fa-user-plus mr-2"></i>
                 Nuevo Usuario
             </a>
@@ -24,7 +24,7 @@
 
             <!-- Filtros y búsqueda -->
             <div class="bg-cb-card rounded-lg shadow-xl border border-cb-border p-6 mb-6">
-                <form method="GET" action="{{ route('admin.users.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <form method="GET" action="{{ route('admin.usuarios.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Búsqueda -->
                     <div class="md:col-span-2">
                         <label for="search" class="block text-sm font-medium text-gray-300 mb-2">
@@ -60,7 +60,7 @@
                         <button type="submit" class="px-6 py-2 bg-cb-green text-white rounded-lg hover:bg-cb-green/80 transition-all font-medium">
                             <i class="fas fa-filter mr-2"></i>Filtrar
                         </button>
-                        <a href="{{ route('admin.users.index') }}" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all font-medium">
+                        <a href="{{ route('admin.usuarios.index') }}" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all font-medium">
                             <i class="fas fa-times mr-2"></i>Limpiar
                         </a>
                     </div>
@@ -141,7 +141,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-2">
                                             <!-- Ver detalles -->
-                                            <a href="{{ route('admin.users.show', $user) }}" 
+                                            <a href="{{ route('admin.usuarios.show', $user) }}" 
                                                class="text-blue-400 hover:text-blue-300 transition-colors"
                                                title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
@@ -149,7 +149,7 @@
 
                                             @if(!$user->hasRole('super_admin'))
                                                 <!-- Editar -->
-                                                <a href="{{ route('admin.users.edit', $user) }}" 
+                                                <a href="{{ route('admin.usuarios.edit', $user) }}" 
                                                    class="text-yellow-400 hover:text-yellow-300 transition-colors"
                                                    title="Editar">
                                                     <i class="fas fa-edit"></i>
@@ -158,7 +158,7 @@
                                                 <!-- Eliminar -->
                                                 @if($user->id !== auth()->id())
                                                     <form method="POST" 
-                                                          action="{{ route('admin.users.destroy', $user) }}" 
+                                                          action="{{ route('admin.usuarios.destroy', $user) }}" 
                                                           onsubmit="return confirm('¿Estás seguro de eliminar este usuario?')"
                                                           class="inline">
                                                         @csrf

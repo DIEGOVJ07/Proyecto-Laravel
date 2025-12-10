@@ -27,7 +27,7 @@ class TeamController extends Controller
             return back()->with('error', 'Código de equipo no encontrado');
         }
 
-        return view('teams.show', compact('team'));
+        return view('equipos.show', compact('team'));
     }
 
     /**
@@ -104,6 +104,6 @@ class TeamController extends Controller
                                     ->with(['user', 'members.user'])
                                     ->get();
 
-        return view('teams.public', compact('contest', 'teams'));
+        return view('equipos.public', compact('contest', 'teams'));
     }
 }

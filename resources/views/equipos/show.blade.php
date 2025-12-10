@@ -119,7 +119,7 @@
                                 Equipo Completo
                             </button>
                         @else
-                            <form method="POST" action="{{ route('teams.join', $team->id) }}">
+                            <form method="POST" action="{{ route('equipos.join', $team->id) }}">
                                 @csrf
                                 <button type="submit" class="w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-6 rounded-lg transition">
                                     <i class="fas fa-user-plus mr-2"></i>
@@ -136,7 +136,7 @@
                                 <span class="font-bold">Ya eres miembro de este equipo</span>
                             </div>
                             @if($team->user_id != Auth::id())
-                                <form method="POST" action="{{ route('teams.leave', $team->id) }}">
+                                <form method="POST" action="{{ route('equipos.leave', $team->id) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500 rounded-lg transition" onclick="return confirm('¿Seguro que quieres salir del equipo?')">

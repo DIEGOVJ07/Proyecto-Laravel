@@ -36,7 +36,7 @@ class UserController extends Controller
         $users = $query->latest()->paginate(15);
         $roles = Role::all();
 
-        return view('admin.users.index', compact('users', 'roles'));
+        return view('admin.usuarios.index', compact('users', 'roles'));
     }
 
     /**
@@ -45,7 +45,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('admin.users.create', compact('roles'));
+        return view('admin.usuarios.create', compact('roles'));
     }
 
     /**
@@ -69,7 +69,7 @@ class UserController extends Controller
 
         $user->assignRole($request->role);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario creado exitosamente.');
     }
 
@@ -79,7 +79,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load(['roles', 'contestRegistrations', 'leaderboard']);
-        return view('admin.users.show', compact('user'));
+        return view('admin.usuarios.show', compact('user'));
     }
 
     /**
@@ -93,7 +93,7 @@ class UserController extends Controller
         }
 
         $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.usuarios.edit', compact('user', 'roles'));
     }
 
     /**
@@ -121,7 +121,7 @@ class UserController extends Controller
         // Sincronizar rol
         $user->syncRoles([$request->role]);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario actualizado exitosamente.');
     }
 
@@ -142,7 +142,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario eliminado exitosamente.');
     }
 

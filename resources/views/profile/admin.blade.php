@@ -9,7 +9,7 @@
                 <p class="text-gray-400 text-sm mt-1">Vista completa del sistema</p>
             </div>
             <div class="flex space-x-3">
-                <a href="{{ route('admin.contests.create') }}" class="px-4 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
+                <a href="{{ route('admin.concursos.create') }}" class="px-4 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
                     <i class="fas fa-plus mr-2"></i>
                     Crear Concurso
                 </a>
@@ -92,7 +92,7 @@
 
             {{-- Accesos Rápidos --}}
             <div class="grid md:grid-cols-3 gap-6">
-                <a href="{{ route('admin.contests.index') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-cb-green/50 transition group">
+                <a href="{{ route('admin.concursos.index') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-cb-green/50 transition group">
                     <div class="flex items-center space-x-4">
                         <div class="w-14 h-14 bg-cb-green/10 rounded-lg flex items-center justify-center group-hover:bg-cb-green/20 transition">
                             <i class="fas fa-list text-cb-green text-2xl"></i>
@@ -104,7 +104,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('admin.contests.create') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-blue-500/50 transition group">
+                <a href="{{ route('admin.concursos.create') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-blue-500/50 transition group">
                     <div class="flex items-center space-x-4">
                         <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20 transition">
                             <i class="fas fa-plus-circle text-blue-400 text-2xl"></i>
@@ -116,7 +116,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('leaderboard.index') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-purple-500/50 transition group">
+                <a href="{{ route('clasificacion.index') }}" class="bg-cb-card p-6 rounded-xl shadow-xl border border-cb-border hover:border-purple-500/50 transition group">
                     <div class="flex items-center space-x-4">
                         <div class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition">
                             <i class="fas fa-chart-line text-purple-400 text-2xl"></i>
@@ -136,7 +136,7 @@
                         <i class="fas fa-trophy text-cb-green mr-3"></i>
                         Concursos del Sistema
                     </h3>
-                    <a href="{{ route('admin.contests.index') }}" class="text-cb-green hover:text-green-400 text-sm font-medium">
+                    <a href="{{ route('admin.concursos.index') }}" class="text-cb-green hover:text-green-400 text-sm font-medium">
                         Ver todos →
                     </a>
                 </div>
@@ -178,10 +178,10 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.contests.teams', $contest->id) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Ver equipos">
+                                            <a href="{{ route('admin.concursos.teams', $contest->id) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Ver equipos">
                                                 <i class="fas fa-users"></i>
                                             </a>
-                                            <a href="{{ route('admin.contests.index') }}" class="p-2 bg-cb-green/10 text-cb-green rounded hover:bg-cb-green/20 transition" title="Gestionar">
+                                            <a href="{{ route('admin.concursos.index') }}" class="p-2 bg-cb-green/10 text-cb-green rounded hover:bg-cb-green/20 transition" title="Gestionar">
                                                 <i class="fas fa-cog"></i>
                                             </a>
                                         </div>

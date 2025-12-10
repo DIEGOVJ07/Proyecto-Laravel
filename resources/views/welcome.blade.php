@@ -6,8 +6,8 @@
             const targetTimeElement = document.getElementById('countdown-timer');
             if (!targetTimeElement) return;
 
-            @if($nextEvent && $nextEvent->countdown_target)
-            const targetTime = {{ $nextEvent->countdown_target }} * 1000;
+            @if($nextEvent && $nextEvent->start_date)
+            const targetTime = new Date('{{ $nextEvent->start_date->format('Y-m-d') }}').getTime();
             const timer = targetTimeElement;
             const interval = setInterval(updateCountdown, 1000);
 
@@ -100,7 +100,7 @@
                             <div class="md:col-span-2 space-y-4">
                                 <span class="inline-flex items-center space-x-2 text-sm font-semibold text-cb-green">
                                     <i class="fas fa-trophy"></i>
-                                    <span>Premio: ${{ $nextEvent->premio }}</span>
+                                    <span>Premio: ${{ number_format($nextEvent->prize) }}</span>
                                 </span>
                                 <h3 class="text-3xl md:text-4xl font-extrabold text-white">
                                     {{ $nextEvent->name }}
@@ -111,15 +111,15 @@
                                 <ul class="text-gray-300 text-sm space-y-2 pt-2">
                                     <li class="flex items-center space-x-2">
                                         <i class="far fa-calendar-alt text-cb-green"></i>
-                                        <span>{{ $nextEvent->fecha }}</span>
+                                        <span>{{ $nextEvent->start_date->format('d/m/Y') }}</span>
                                     </li>
                                     <li class="flex items-center space-x-2">
                                         <i class="far fa-clock text-cb-green"></i>
-                                        <span>Duración: {{ $nextEvent->duracion }}</span>
+                                        <span>Duración: {{ $nextEvent->duration }}</span>
                                     </li>
                                     <li class="flex items-center space-x-2">
                                         <i class="fas fa-users text-cb-green"></i>
-                                        <span>{{ $nextEvent->registrados }} participantes registrados</span>
+                                        <span>{{ number_format($nextEvent->participants) }} participantes registrados</span>
                                     </li>
                                 </ul>
                                 @auth
@@ -208,7 +208,7 @@
                                 </div>
 
                                 @auth
-                                    <a href="{{ route('contests.show', $contest->id) }}" class="mt-4 block text-center bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-4 rounded-lg transition duration-300">
+                                    <a href="{{ route('concursos.show', $contest->id) }}" class="mt-4 block text-center bg-cb-green hover:bg-emerald-600 text-cb-dark font-bold py-2 px-4 rounded-lg transition duration-300">
                                         Ver Detalles →
                                     </a>
                                 @else

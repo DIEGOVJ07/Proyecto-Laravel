@@ -18,16 +18,15 @@ class DatabaseSeeder extends Seeder
             RolesYPermisosSeeder::class,
         ]);
 
-        // 2. Datos principales
+        // 2. Usuarios de prueba (DEBEN CREARSE PRIMERO)
+        $this->crearUsuariosManuales();
+
+        // 3. Datos principales (requieren usuarios existentes)
         $this->call([
-            // TablaPosicionesSeeder::class,  <--- COMENTADO O BORRADO (Causaba el error)
             ConcursoSeeder::class,            // Este crea Concursos + Leaderboard correctamente
             JuezSeeder::class,
-            PostSeeder::class,                // Artículos del blog
+            PostSeeder::class,                // Artículos del blog (requiere administradores)
         ]);
-
-        // 3. Usuarios de prueba
-        $this->crearUsuariosManuales();
     }
 
     private function crearUsuariosManuales()
@@ -38,6 +37,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'superadmin@codebattle.com',
             'password' => Hash::make('superadmin123'),
             'role' => 'super_admin',
+            'email_verified_at' => now(), // ✅ Email verificado automáticamente
         ]);
         $superAdmin->assignRole('super_admin');
 
@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@codebattle.com',
             'password' => Hash::make('admin123'),
             'role' => 'admin',
+            'email_verified_at' => now(), // ✅ Email verificado automáticamente
         ]);
         $admin->assignRole('admin');
 
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'juez@codebattle.com',
             'password' => Hash::make('juez123'),
             'role' => 'juez',
+            'email_verified_at' => now(), // ✅ Email verificado automáticamente
         ]);
         $juez->assignRole('juez');
 
@@ -65,6 +67,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'user@codebattle.com',
             'password' => Hash::make('user123'),
             'role' => 'user',
+            'email_verified_at' => now(), // ✅ Email verificado automáticamente
         ]);
         $user->assignRole('user');
     }

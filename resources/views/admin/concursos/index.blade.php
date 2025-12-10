@@ -15,7 +15,7 @@
                 
                 {{-- BOTÓN CREAR (SOLO ADMIN) --}}
                 @role('admin')
-                <a href="{{ route('admin.contests.create') }}" class="px-5 py-2.5 bg-[#10b981] hover:bg-[#059669] text-white font-bold rounded-lg transition shadow-lg shadow-[#10b981]/20 flex items-center gap-2 text-sm uppercase tracking-wide">
+                <a href="{{ route('admin.concursos.create') }}" class="px-5 py-2.5 bg-[#10b981] hover:bg-[#059669] text-white font-bold rounded-lg transition shadow-lg shadow-[#10b981]/20 flex items-center gap-2 text-sm uppercase tracking-wide">
                     <i class="fas fa-plus"></i> Crear Concurso
                 </a>
                 @endrole
@@ -82,7 +82,7 @@
 
                                     {{-- Equipos --}}
                                     <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('admin.contests.teams', $contest->id) }}" class="inline-flex items-center gap-2 px-3 py-1 bg-[#0f111a] rounded-lg border border-[#2c3240] hover:border-[#10b981] hover:text-white transition group text-xs">
+                                        <a href="{{ route('admin.concursos.teams', $contest->id) }}" class="inline-flex items-center gap-2 px-3 py-1 bg-[#0f111a] rounded-lg border border-[#2c3240] hover:border-[#10b981] hover:text-white transition group text-xs">
                                             <i class="fas fa-users text-[#10b981] group-hover:text-white"></i>
                                             <span class="font-bold text-white">{{ $contest->registrations_count }}</span>
                                         </a>
@@ -101,7 +101,7 @@
                                             {{-- BOTÓN DE CALIFICAR (VISIBLE PARA ADMIN Y JUEZ)     --}}
                                             {{-- ================================================== --}}
                                             @hasanyrole('admin|juez')
-                                                <a href="{{ route('admin.contests.teams', $contest->id) }}" 
+                                                <a href="{{ route('admin.concursos.teams', $contest->id) }}" 
                                                    class="p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500 hover:text-white transition" 
                                                    title="Ver y Calificar Equipos">
                                                     <i class="fas fa-gavel"></i>
@@ -113,7 +113,7 @@
                                             {{-- ================================================== --}}
                                             @role('admin')
                                                 @if($contest->status != 'Finalizado')
-                                                    <form method="POST" action="{{ route('admin.contests.close', $contest->id) }}" class="inline">
+                                                    <form method="POST" action="{{ route('admin.concursos.close', $contest->id) }}" class="inline">
                                                         @csrf
                                                         <button type="submit" class="p-2 rounded-lg bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30 hover:bg-[#f59e0b] hover:text-black transition" title="Cerrar concurso" onclick="return confirm('¿Cerrar este concurso?')">
                                                             <i class="fas fa-lock"></i>
@@ -121,7 +121,7 @@
                                                     </form>
                                                 @endif
 
-                                                <form method="POST" action="{{ route('admin.contests.destroy', $contest->id) }}" class="inline">
+                                                <form method="POST" action="{{ route('admin.concursos.destroy', $contest->id) }}" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white transition" title="Eliminar" onclick="return confirm('¿Eliminar este concurso?')">
@@ -140,7 +140,7 @@
                                             <i class="fas fa-inbox text-4xl mb-3 text-[#2c3240]"></i>
                                             <p class="text-sm">No hay concursos registrados.</p>
                                             @role('admin')
-                                                <a href="{{ route('admin.contests.create') }}" class="mt-4 px-4 py-2 bg-[#10b981] text-white text-xs font-bold rounded hover:bg-[#059669] transition">
+                                                <a href="{{ route('admin.concursos.create') }}" class="mt-4 px-4 py-2 bg-[#10b981] text-white text-xs font-bold rounded hover:bg-[#059669] transition">
                                                     Crear Primer Concurso
                                                 </a>
                                             @endrole

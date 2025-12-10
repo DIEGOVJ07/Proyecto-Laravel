@@ -65,7 +65,7 @@
                             </div>
 
                             {{-- Botón de Acción --}}
-                            <a href="{{ route('leaderboard.show', $contest->id) }}" class="block w-full py-2 bg-[#2c3240] hover:bg-[#10b981] hover:text-white text-gray-300 text-center rounded-lg text-sm font-bold transition-all duration-300 border border-gray-700 hover:border-[#10b981] shadow-md">
+                            <a href="{{ route('clasificacion.show', $contest->id) }}" class="block w-full py-2 bg-[#2c3240] hover:bg-[#10b981] hover:text-white text-gray-300 text-center rounded-lg text-sm font-bold transition-all duration-300 border border-gray-700 hover:border-[#10b981] shadow-md">
                                 Ver Ranking Oficial &rarr;
                             </a>
                         </div>

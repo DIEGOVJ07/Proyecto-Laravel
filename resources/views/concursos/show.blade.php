@@ -41,7 +41,7 @@
                     <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">{{ $event->name }}</h1>
                 </div>
 
-                <a href="{{ route('leaderboard.index') }}" class="px-4 py-2 rounded-lg border border-[#2c3240] bg-[#151a25] text-gray-400 text-sm font-medium hover:text-white hover:border-gray-500 transition flex items-center gap-2">
+                <a href="{{ route('clasificacion.index') }}" class="px-4 py-2 rounded-lg border border-[#2c3240] bg-[#151a25] text-gray-400 text-sm font-medium hover:text-white hover:border-gray-500 transition flex items-center gap-2">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
@@ -145,7 +145,52 @@
                                         </div>
                                     </div>
 
-                                    <form action="{{ route('contests.cancel', $event->id) }}" method="POST" onsubmit="return confirm('¿Seguro?');">
+                                    {{-- SECCIÓN DE ARCHIVOS Y GITHUB --}}
+                                    <div class="bg-[#0f111a] border border-[#2c3240] rounded-lg p-5 mb-6">
+                                        <h4 class="text-white font-bold mb-4 text-sm uppercase flex items-center gap-2">
+                                            <i class="fas fa-upload text-[#10b981]"></i> Proyecto
+                                        </h4>
+
+                                        {{-- Upload de Archivo --}}
+                                        <form action="{{ route('concursos.upload-file', $event->id) }}" method="POST" enctype="multipart/form-data" class="mb-4">
+                                            @csrf
+                                            <label class="text-[10px] text-gray-500 uppercase font-bold mb-1.5 block tracking-wider">Archivo (Max: 50MB)</label>
+                                            <input type="file" name="project_file" class="w-full bg-[#151a25] border border-[#2c3240] rounded-lg text-gray-300 text-xs px-3 py-2 focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#10b981]/20 file:text-[#10b981] hover:file:bg-[#10b981]/30" accept="*" required>
+                                            
+                                            @if($registration->project_file)
+                                                <div class="mt-2 flex items-center justify-between text-xs">
+                                                    <span class="text-gray-400">
+                                                        <i class="fas fa-file-alt text-[#10b981]"></i> 
+                                                        {{ basename($registration->project_file) }}
+                                                    </span>
+                                                    <span class="text-gray-500">{{ $registration->file_uploaded_at?->format('d/m/Y H:i') }}</span>
+                                                </div>
+                                            @endif
+
+                                            <button type="submit" class="w-full mt-3 bg-[#10b981]/20 hover:bg-[#10b981]/30 border border-[#10b981] text-[#10b981] font-bold py-2 rounded-lg transition text-xs uppercase">
+                                                <i class="fas fa-cloud-upload-alt mr-1"></i> Subir Archivo
+                                            </button>
+                                        </form>
+
+                                        {{-- GitHub Link --}}
+                                        <form action="{{ route('concursos.update-github', $event->id) }}" method="POST" class="border-t border-[#2c3240] pt-4">
+                                            @csrf
+                                            <label class="text-[10px] text-gray-500 uppercase font-bold mb-1.5 block tracking-wider">GitHub Repository</label>
+                                            <input type="url" name="github_link" value="{{ $registration->github_link }}" class="w-full bg-[#151a25] border border-[#2c3240] rounded-lg text-white text-xs px-3 py-2 focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] outline-none placeholder-gray-600 transition" placeholder="https://github.com/usuario/repo" required>
+                                            
+                                            @if($registration->github_link)
+                                                <a href="{{ $registration->github_link }}" target="_blank" class="mt-2 inline-flex items-center text-xs text-[#10b981] hover:text-[#059669]">
+                                                    <i class="fab fa-github mr-1"></i> Ver repositorio
+                                                </a>
+                                            @endif
+
+                                            <button type="submit" class="w-full mt-3 bg-[#10b981]/20 hover:bg-[#10b981]/30 border border-[#10b981] text-[#10b981] font-bold py-2 rounded-lg transition text-xs uppercase">
+                                                <i class="fas fa-save mr-1"></i> Guardar GitHub
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <form action="{{ route('concursos.cancel', $event->id) }}" method="POST" onsubmit="return confirm('¿Seguro?');">
                                         @csrf @method('DELETE')
                                         <button class="text-[#ef4444] hover:text-red-400 text-xs underline transition font-medium">
                                             Cancelar registro
@@ -160,7 +205,7 @@
                                     <p class="text-xs text-gray-500 mt-1">Únete al desafío</p>
                                 </div>
 
-                                <form action="{{ route('contests.register', $event->id) }}" method="POST" class="space-y-4">
+                                <form action="{{ route('concursos.register', $event->id) }}" method="POST" class="space-y-4">
                                     @csrf
                                     <div>
                                         <label class="text-[10px] text-gray-500 uppercase font-bold mb-1.5 block tracking-wider">Nombre del Equipo</label>
@@ -193,13 +238,13 @@
                                 <p class="text-gray-400 text-sm mb-6">El evento ha concluido.</p>
                                 
                                 {{-- Botón para ver Ranking --}}
-                                <a href="{{ route('leaderboard.show', $event->id) }}" class="w-full block py-3 bg-[#2c3240] hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition text-center border border-gray-600 mb-3">
+                                <a href="{{ route('clasificacion.show', $event->id) }}" class="w-full block py-3 bg-[#2c3240] hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition text-center border border-gray-600 mb-3">
                                     Ver Ranking Oficial &darr;
                                 </a>
 
                                 {{-- LÓGICA DEL CERTIFICADO --}}
                                 @if($isRegistered && optional($registration)->status === 'qualified')
-                                    <form action="{{ route('contests.certificate', $event->id) }}" method="POST">
+                                    <form action="{{ route('concursos.certificate', $event->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="w-full py-3 bg-[#10b981]/20 hover:bg-[#10b981]/30 text-[#10b981] border border-[#10b981] rounded-lg text-sm font-bold transition text-center flex items-center justify-center gap-2 group">
                                             <i class="fas fa-certificate group-hover:scale-110 transition-transform"></i>

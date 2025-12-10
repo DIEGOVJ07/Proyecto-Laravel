@@ -91,7 +91,7 @@
 
                                 {{-- Botón de unirse --}}
                                 @if(!$team->hasUser(Auth::id()))
-                                    <form method="POST" action="{{ route('teams.join', $team->id) }}">
+                                    <form method="POST" action="{{ route('equipos.join', $team->id) }}">
                                         @csrf
                                         <button type="submit" class="w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-2 px-4 rounded-lg transition">
                                             <i class="fas fa-user-plus mr-2"></i>
@@ -120,7 +120,7 @@
                     <p class="text-gray-400 mb-8">
                         Sé el primero en crear un equipo público para este concurso
                     </p>
-                    <a href="{{ route('contests.show', $contest->id) }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
+                    <a href="{{ route('concursos.show', $contest->id) }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
                         <i class="fas fa-plus mr-2"></i>
                         Crear Equipo
                     </a>
@@ -129,7 +129,7 @@
 
             {{-- Volver --}}
             <div class="text-center">
-                <a href="{{ route('contests.show', $contest->id) }}" class="inline-block px-6 py-3 bg-cb-border hover:bg-gray-600 text-white font-bold rounded-lg transition">
+                <a href="{{ route('concursos.show', $contest->id) }}" class="inline-block px-6 py-3 bg-cb-border hover:bg-gray-600 text-white font-bold rounded-lg transition">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Volver al Concurso
                 </a>

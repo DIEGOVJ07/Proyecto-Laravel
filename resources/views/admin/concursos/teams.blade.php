@@ -8,7 +8,7 @@
                 </h2>
                 <p class="text-gray-400 text-sm mt-1">{{ $contest->name }}</p>
             </div>
-            <a href="{{ route('admin.contests.index') }}" class="px-4 py-2 bg-cb-border text-white rounded-lg hover:bg-gray-600 transition">
+            <a href="{{ route('admin.concursos.index') }}" class="px-4 py-2 bg-cb-border text-white rounded-lg hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -138,6 +138,59 @@
                                             @endforeach
                                         </div>
                                     </div>
+
+                                    {{-- Sección de Archivos y GitHub --}}
+                                    <div class="mt-4 p-3 bg-cb-dark/30 rounded-lg border border-cb-border">
+                                        <p class="text-gray-400 text-xs font-bold uppercase mb-2">Proyecto del Equipo</p>
+                                        <div class="space-y-2">
+                                            {{-- Archivo subido --}}
+                                            @if($registration->project_file)
+                                                <div class="flex items-center justify-between bg-cb-dark px-3 py-2 rounded border border-cb-green/30">
+                                                    <div class="flex items-center space-x-2">
+                                                        <i class="fas fa-file-archive text-cb-green"></i>
+                                                        <div>
+                                                            <p class="text-white text-sm font-medium">{{ basename($registration->project_file) }}</p>
+                                                            <p class="text-gray-400 text-xs">Subido: {{ $registration->file_uploaded_at?->format('d/m/Y H:i') }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <a href="{{ route('concursos.download-file', [$contest->id, $registration->id]) }}" 
+                                                       class="px-3 py-1 bg-cb-green/20 hover:bg-cb-green/30 text-cb-green border border-cb-green rounded text-xs font-bold transition flex items-center gap-1">
+                                                        <i class="fas fa-download"></i> Descargar
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div class="bg-cb-dark px-3 py-2 rounded border border-gray-600">
+                                                    <p class="text-gray-500 text-xs">
+                                                        <i class="fas fa-exclamation-circle mr-1"></i>
+                                                        No se ha subido ningún archivo
+                                                    </p>
+                                                </div>
+                                            @endif
+
+                                            {{-- GitHub Link --}}
+                                            @if($registration->github_link)
+                                                <div class="bg-cb-dark px-3 py-2 rounded border border-cb-border">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center space-x-2">
+                                                            <i class="fab fa-github text-white"></i>
+                                                            <span class="text-gray-300 text-sm">Repositorio GitHub</span>
+                                                        </div>
+                                                        <a href="{{ $registration->github_link }}" target="_blank" 
+                                                           class="px-3 py-1 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border border-purple-500 rounded text-xs font-bold transition flex items-center gap-1">
+                                                            <i class="fas fa-external-link-alt"></i> Ver
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="bg-cb-dark px-3 py-2 rounded border border-gray-600">
+                                                    <p class="text-gray-500 text-xs">
+                                                        <i class="fas fa-exclamation-circle mr-1"></i>
+                                                        No se ha proporcionado enlace de GitHub
+                                                    </p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {{-- ACCIONES (Botones) --}}
@@ -150,7 +203,7 @@
                                     </button>
 
                                     {{-- Botón ELIMINAR --}}
-                                    <form method="POST" action="{{ route('admin.contests.teams.delete', [$contest->id, $registration->id]) }}">
+                                    <form method="POST" action="{{ route('admin.concursos.equipos.delete', [$contest->id, $registration->id]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-full px-4 py-2 bg-red-500/10 text-red-400 border border-red-500 rounded-lg hover:bg-red-500/20 transition text-sm font-medium flex items-center justify-center" onclick="return confirm('¿Eliminar este equipo? Esta acción no se puede deshacer.')">
@@ -181,7 +234,7 @@
                                          x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                                          class="inline-block align-bottom bg-cb-card border border-cb-border rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                                         
-                                        <form method="POST" action="{{ route('admin.contests.teams.grade', [$contest->id, $registration->id]) }}">
+                                        <form method="POST" action="{{ route('admin.concursos.equipos.grade', [$contest->id, $registration->id]) }}">
                                             @csrf
                                             <div class="bg-cb-dark px-4 py-5 sm:p-6">
                                                 <h3 class="text-xl leading-6 font-bold text-white mb-1" id="modal-title">

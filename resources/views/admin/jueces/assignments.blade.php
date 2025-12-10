@@ -8,7 +8,7 @@
                 </h2>
                 <p class="text-gray-400 text-sm mt-1">{!! $judge->getCertificationBadge() !!} • {{ $judge->specialty }}</p>
             </div>
-            <a href="{{ route('admin.judges.index') }}" class="px-4 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
+            <a href="{{ route('admin.jueces.index') }}" class="px-4 py-2 bg-cb-border text-white font-bold rounded-lg hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -64,7 +64,7 @@
                         Asignar a Nuevo Concurso
                     </h3>
 
-                    <form method="POST" action="{{ route('admin.judges.assign', $judge) }}" class="grid md:grid-cols-3 gap-4">
+                    <form method="POST" action="{{ route('admin.jueces.assign', $judge) }}" class="grid md:grid-cols-3 gap-4">
                         @csrf
                         
                         <div>
@@ -152,10 +152,10 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-end space-x-2">
-                                                <a href="{{ route('admin.contests.teams', $contest->id) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Ver concurso">
+                                                <a href="{{ route('admin.concursos.teams', $contest->id) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Ver concurso">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('admin.judges.remove-contest', [$judge, $contest]) }}" class="inline">
+                                                <form method="POST" action="{{ route('admin.jueces.remove-contest', [$judge, $contest]) }}" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="p-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition" title="Remover asignación" onclick="return confirm('¿Remover al juez de este concurso?')">

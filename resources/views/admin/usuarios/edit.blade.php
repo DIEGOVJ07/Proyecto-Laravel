@@ -5,7 +5,7 @@
                 <i class="fas fa-user-edit mr-2 text-purple-400"></i>
                 Editar Usuario: {{ $user->name }}
             </h2>
-            <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all text-sm font-medium">
+            <a href="{{ route('admin.usuarios.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all text-sm font-medium">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -30,7 +30,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('admin.users.update', $user) }}" class="space-y-6">
+                <form method="POST" action="{{ route('admin.usuarios.update', $user) }}" class="space-y-6">
                     @csrf
                     @method('PUT')
 
@@ -135,7 +135,7 @@
 
                     <!-- Botones -->
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-cb-border">
-                        <a href="{{ route('admin.users.index') }}" 
+                        <a href="{{ route('admin.usuarios.index') }}" 
                            class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all font-medium">
                             <i class="fas fa-times mr-2"></i>Cancelar
                         </a>

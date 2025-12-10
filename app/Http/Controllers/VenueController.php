@@ -156,6 +156,6 @@ class VenueController extends Controller
     public function show($id)
     {
         // Aquí puedes agregar lógica para mostrar una sede específica
-        return redirect()->route('venues.index');
+        return redirect()->route('sedes.index');
     }
 }

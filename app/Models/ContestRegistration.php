@@ -27,19 +27,23 @@ class ContestRegistration extends Model
         'status',
         'team_size',
         
-        // --- NUEVOS CAMPOS PARA CALIFICACIÓN ---
+        // --- CAMPOS PARA CALIFICACIÓN ---
         'score',          // Puntaje total
         'score_details',  // Desglose JSON (Funcionalidad, Diseño...)
         'feedback',       // Comentarios del juez
+        
+        // --- CAMPOS PARA ARCHIVOS Y ENLACES ---
+        'project_file',   // Ruta del archivo del proyecto
+        'github_link',    // Enlace de GitHub
+        'file_uploaded_at', // Fecha de subida del archivo
     ];
 
     protected $casts = [
         'is_public' => 'boolean',
         'is_team_leader' => 'boolean',
-        
-        // --- NUEVOS CASTS ---
         'score' => 'integer',
-        'score_details' => 'array', // ¡CRUCIAL! Convierte el JSON de la BD a Array PHP automáticamente
+        'score_details' => 'array', // Convierte el JSON de la BD a Array PHP automáticamente
+        'file_uploaded_at' => 'datetime',
     ];
 
     public function user()

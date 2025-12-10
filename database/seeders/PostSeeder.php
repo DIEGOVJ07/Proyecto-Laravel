@@ -764,6 +764,8 @@ for (int i = 0; i < n; i += 4) {
         ];
 
         foreach ($posts as $postData) {
+            // Generar slug a partir del título
+            $postData['slug'] = \Illuminate\Support\Str::slug($postData['title']);
             Post::create($postData);
         }
 

@@ -22,7 +22,7 @@
                 <div class="flex flex-col sm:flex-row gap-3">
                     {{-- BOTÓN CERTIFICADO (Visible si el usuario está registrado, clasificado y el evento terminó) --}}
                     @if(isset($isRegistered) && $isRegistered && isset($registration) && $registration->status === 'qualified')
-                        <form action="{{ route('contests.certificate', $event->id) }}" method="POST">
+                        <form action="{{ route('concursos.certificate', $event->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="px-5 py-2 rounded-lg bg-[#10b981] hover:bg-[#059669] text-white text-sm font-bold shadow-lg shadow-[#10b981]/20 flex items-center gap-2 transition transform hover:scale-105">
                                 <i class="fas fa-certificate"></i> Obtener Certificado
@@ -30,7 +30,7 @@
                         </form>
                     @endif
 
-                    <a href="{{ route('leaderboard.index') }}" class="px-4 py-2 border border-[#2c3240] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition text-sm font-medium flex items-center gap-2 bg-[#151a25]">
+                    <a href="{{ route('clasificacion.index') }}" class="px-4 py-2 border border-[#2c3240] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition text-sm font-medium flex items-center gap-2 bg-[#151a25]">
                         <i class="fas fa-arrow-left"></i> Volver
                     </a>
                 </div>

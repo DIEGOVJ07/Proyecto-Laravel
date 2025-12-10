@@ -5,7 +5,7 @@
                 <i class="fas fa-gavel text-cb-green mr-2"></i>
                 Gestión de Jueces
             </h2>
-            <a href="{{ route('admin.judges.create') }}" class="px-4 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
+            <a href="{{ route('admin.jueces.create') }}" class="px-4 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
                 <i class="fas fa-plus mr-2"></i>
                 Agregar Juez
             </a>
@@ -122,12 +122,12 @@
                                     {{ $judge->experience_years }} años
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('admin.judges.assignments', $judge) }}" class="text-cb-green hover:text-green-400 font-medium">
+                                    <a href="{{ route('admin.jueces.assignments', $judge) }}" class="text-cb-green hover:text-green-400 font-medium">
                                         {{ $judge->contests_count }} asignaciones
                                     </a>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <form method="POST" action="{{ route('admin.judges.toggle-status', $judge) }}" class="inline">
+                                    <form method="POST" action="{{ route('admin.jueces.toggle-status', $judge) }}" class="inline">
                                         @csrf
                                         <button type="submit" class="px-3 py-1 text-xs font-semibold rounded-full transition
                                             @if($judge->is_active) 
@@ -142,13 +142,13 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <a href="{{ route('admin.judges.assignments', $judge) }}" class="p-2 bg-purple-500/10 text-purple-400 rounded hover:bg-purple-500/20 transition" title="Ver asignaciones">
+                                        <a href="{{ route('admin.jueces.assignments', $judge) }}" class="p-2 bg-purple-500/10 text-purple-400 rounded hover:bg-purple-500/20 transition" title="Ver asignaciones">
                                             <i class="fas fa-clipboard-list"></i>
                                         </a>
-                                        <a href="{{ route('admin.judges.edit', $judge) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Editar">
+                                        <a href="{{ route('admin.jueces.edit', $judge) }}" class="p-2 bg-blue-500/10 text-blue-400 rounded hover:bg-blue-500/20 transition" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.judges.destroy', $judge) }}" class="inline">
+                                        <form method="POST" action="{{ route('admin.jueces.destroy', $judge) }}" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition" title="Eliminar" onclick="return confirm('¿Eliminar este juez? Esta acción no se puede deshacer.')">
@@ -163,7 +163,7 @@
                                 <td colspan="7" class="px-6 py-12 text-center text-gray-400">
                                     <i class="fas fa-inbox text-4xl mb-4"></i>
                                     <p>No hay jueces registrados</p>
-                                    <a href="{{ route('admin.judges.create') }}" class="mt-4 inline-block px-6 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
+                                    <a href="{{ route('admin.jueces.create') }}" class="mt-4 inline-block px-6 py-2 bg-cb-green text-cb-dark font-bold rounded-lg hover:bg-green-600 transition">
                                         <i class="fas fa-plus mr-2"></i>
                                         Agregar Primer Juez
                                     </a>

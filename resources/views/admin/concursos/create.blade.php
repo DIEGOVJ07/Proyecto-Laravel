@@ -5,7 +5,7 @@
                 <i class="fas fa-plus-circle text-cb-green mr-2"></i>
                 Crear Nuevo Concurso
             </h2>
-            <a href="{{ route('admin.contests.index') }}" class="px-4 py-2 bg-cb-border text-white rounded-lg hover:bg-gray-600 transition">
+            <a href="{{ route('admin.concursos.index') }}" class="px-4 py-2 bg-cb-border text-white rounded-lg hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Volver
             </a>
@@ -16,7 +16,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
             <div class="bg-cb-card rounded-xl shadow-xl border border-cb-border p-8">
-                <form method="POST" action="{{ route('admin.contests.store') }}">
+                <form method="POST" action="{{ route('admin.concursos.store') }}">
                     @csrf
 
                     {{-- Nombre --}}
@@ -295,7 +295,7 @@
                             Crear Concurso
                         </button>
                         <a 
-                            href="{{ route('admin.contests.index') }}"
+                            href="{{ route('admin.concursos.index') }}"
                             class="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition duration-300 text-center"
                         >
                             <i class="fas fa-times mr-2"></i>

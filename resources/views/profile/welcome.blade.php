@@ -108,7 +108,7 @@
                             Concursos
                         </a>
                         @auth
-                            <a href="{{ route('leaderboard.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('leaderboard.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
+                            <a href="{{ route('clasificacion.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('clasificacion.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 Clasificación
                             </a>
                             <a href="{{ route('profile.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('profile.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
@@ -118,7 +118,7 @@
                                 <i class="fas fa-blog mr-2"></i>
                                 Blog
                             </a>
-                            <a href="{{ route('venues.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('venues.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
+                            <a href="{{ route('sedes.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('sedes.index') ? 'border-cb-green text-white' : 'border-transparent text-gray-300' }} text-sm font-medium hover:text-white hover:border-cb-green transition duration-150">
                                 <i class="fas fa-map-marker-alt mr-2"></i>
                                 Sedes
                             </a>
@@ -285,7 +285,7 @@
 
                                         {{-- Botón de acción --}}
                                         @auth
-                                            <a href="{{ route('contests.show', $contest->id) }}" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
+                                            <a href="{{ route('concursos.show', $contest->id) }}" class="block w-full bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-4 rounded-lg text-center transition">
                                                 Ver Detalles
                                                 <i class="fas fa-arrow-right ml-2"></i>
                                             </a>
@@ -312,7 +312,7 @@
                                 Los nuevos desafíos se publicarán pronto. ¡Mantente atento!
                             </p>
                             @role('admin')
-                                <a href="{{ route('admin.contests.create') }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
+                                <a href="{{ route('admin.concursos.create') }}" class="inline-block bg-cb-green hover:bg-green-600 text-cb-dark font-bold py-3 px-8 rounded-lg transition">
                                     <i class="fas fa-plus mr-2"></i>
                                     Crear Primer Concurso
                                 </a>

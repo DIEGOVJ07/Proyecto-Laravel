@@ -100,7 +100,7 @@ class ContestController extends Controller
 
         $contest->increment('participants');
 
-        return redirect()->route('leaderboard.index')
+        return redirect()->route('clasificacion.index')
             ->with('success', '¡Equipo creado exitosamente! Tu código es: ' . $registration->team_code);
     }
 
@@ -189,5 +189,97 @@ class ContestController extends Controller
             \Log::error('Error generando certificado: ' . $e->getMessage());
             return back()->with('error', 'Hubo un problema al generar el certificado. Intenta más tarde.');
         }
+    }
+
+    /**
+     * Subir archivo del proyecto
+     */
+    public function uploadFile(Request $request, $id)
+    {
+        $request->validate([
+            'project_file' => 'required|file|max:51200', // 50MB máximo (en KB)
+        ]);
+
+        // Verificar que el usuario sea líder o miembro del equipo
+        $registration = ContestRegistration::where('contest_id', $id)
+            ->where(function($q) {
+                $q->where('user_id', Auth::id())
+                  ->orWhereHas('members', function($sq) {
+                      $sq->where('user_id', Auth::id());
+                  });
+            })
+            ->firstOrFail();
+
+        // Eliminar archivo anterior si existe
+        if ($registration->project_file && \Storage::disk('public')->exists($registration->project_file)) {
+            \Storage::disk('public')->delete($registration->project_file);
+        }
+
+        // Guardar nuevo archivo
+        $file = $request->file('project_file');
+        $filename = 'contest_' . $id . '_team_' . $registration->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('contest_files', $filename, 'public');
+
+        // Actualizar registro
+        $registration->update([
+            'project_file' => $path,
+            'file_uploaded_at' => now(),
+        ]);
+
+        return back()->with('success', 'Archivo subido exitosamente.');
+    }
+
+    /**
+     * Actualizar enlace de GitHub
+     */
+    public function updateGithubLink(Request $request, $id)
+    {
+        $request->validate([
+            'github_link' => 'required|url|max:500',
+        ]);
+
+        // Verificar que el usuario sea líder o miembro del equipo
+        $registration = ContestRegistration::where('contest_id', $id)
+            ->where(function($q) {
+                $q->where('user_id', Auth::id())
+                  ->orWhereHas('members', function($sq) {
+                      $sq->where('user_id', Auth::id());
+                  });
+            })
+            ->firstOrFail();
+
+        $registration->update([
+            'github_link' => $request->github_link,
+        ]);
+
+        return back()->with('success', 'Enlace de GitHub actualizado exitosamente.');
+    }
+
+    /**
+     * Descargar archivo del proyecto
+     */
+    public function downloadFile($contestId, $registrationId)
+    {
+        $registration = ContestRegistration::findOrFail($registrationId);
+
+        // Verificar permisos: Juez, Admin, Super Admin o miembro del equipo
+        $user = Auth::user();
+        $canDownload = $user->hasAnyRole(['super_admin', 'admin', 'juez']) ||
+                       $registration->user_id == $user->id ||
+                       $registration->members()->where('user_id', $user->id)->exists();
+
+        if (!$canDownload) {
+            abort(403, 'No tienes permisos para descargar este archivo.');
+        }
+
+        if (!$registration->project_file) {
+            return back()->with('error', 'No hay archivo disponible para descargar.');
+        }
+
+        if (!\Storage::disk('public')->exists($registration->project_file)) {
+            return back()->with('error', 'El archivo no se encuentra en el servidor.');
+        }
+
+        return \Storage::disk('public')->download($registration->project_file);
     }
 }

@@ -13,23 +13,18 @@ use App\Http\Controllers\Admin\AdminContestController;
 use App\Http\Controllers\Admin\JudgeController;
 use App\Http\Controllers\Admin\UserController;
 
-// ==========================================
 // PÁGINA PÚBLICA
-// ==========================================
 Route::get('/', WelcomeController::class)->name('welcome');
 
-// ==========================================
 // AUTENTICACIÓN (GUEST)
-// ==========================================
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
 
-// ==========================================
+
 // USUARIOS AUTENTICADOS (GENERAL)
-// ==========================================
-// ↓↓↓ AQUÍ AGREGAMOS 'verified' PARA OBLIGAR A CONFIRMAR EMAIL ↓↓↓
+// AQUÍ AGREGAMOS 'verified' PARA OBLIGAR A CONFIRMAR EMAIL
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Logout
@@ -46,28 +41,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Concursos (Vista Participante)
-    Route::get('/concursos/{id}', [ContestController::class, 'show'])->name('contests.show');
-    Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('contests.register');
-    Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('contests.cancel');
+    // Gestión de Equipos (Participante) - Rutas específicas primero
+    Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('equipos.search');
+    Route::post('/equipos/{team}/unirse', [TeamController::class, 'join'])->name('equipos.join');
+    Route::delete('/equipos/{team}/salir', [TeamController::class, 'leave'])->name('equipos.leave');
+    Route::get('/concursos/{contest}/equipos-publicos', [TeamController::class, 'publicTeams'])->name('equipos.public');
     
-    // --- RUTA DE CERTIFICADO ---
-    Route::post('/concursos/{id}/certificado', [ContestController::class, 'requestCertificate'])->name('contests.certificate');
-    // ---------------------------
-
-    // Gestión de Equipos (Participante)
-    Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('teams.search');
-    Route::post('/equipos/{team}/unirse', [TeamController::class, 'join'])->name('teams.join');
-    Route::delete('/equipos/{team}/salir', [TeamController::class, 'leave'])->name('teams.leave');
-    Route::get('/concursos/{contest}/equipos-publicos', [TeamController::class, 'publicTeams'])->name('teams.public');
+    // Concursos (Vista Participante) - Rutas específicas antes que genéricas
+    Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('concursos.register');
+    Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('concursos.cancel');
+    Route::post('/concursos/{id}/certificado', [ContestController::class, 'requestCertificate'])->name('concursos.certificate');
+    Route::post('/concursos/{id}/subir-archivo', [ContestController::class, 'uploadFile'])->name('concursos.upload-file');
+    Route::post('/concursos/{id}/actualizar-github', [ContestController::class, 'updateGithubLink'])->name('concursos.update-github');
+    Route::get('/concursos/{contest}/descargar-archivo/{registration}', [ContestController::class, 'downloadFile'])->name('concursos.download-file');
+    Route::get('/concursos/{id}', [ContestController::class, 'show'])->name('concursos.show');
 
     // Clasificación (Leaderboard)
-    Route::get('/clasificacion', [LeaderboardController::class, 'index'])->name('leaderboard.index');
-    Route::get('/clasificacion/{id}', [LeaderboardController::class, 'show'])->name('leaderboard.show');
+    Route::get('/clasificacion', [LeaderboardController::class, 'index'])->name('clasificacion.index');
+    Route::get('/clasificacion/{id}', [LeaderboardController::class, 'show'])->name('clasificacion.show');
 
     // Sedes
-    Route::get('/sedes', [VenueController::class, 'index'])->name('venues.index');
-    Route::get('/sedes/{id}', [VenueController::class, 'show'])->name('venues.show');
+    Route::get('/sedes', [VenueController::class, 'index'])->name('sedes.index');
+    Route::get('/sedes/{id}', [VenueController::class, 'show'])->name('sedes.show');
     
     // Blog
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
@@ -77,65 +72,55 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/blog/posts/{post}/like', [BlogController::class, 'like'])->name('blog.like');
 });
 
-// ==========================================
-// SUPER ADMINISTRACIÓN (SOLO SUPER ADMIN)
-// ==========================================
+// SUPER usuario (SOLO SUPER ADMIN)
 Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión de Usuarios
-    Route::resource('users', UserController::class);
-    Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-    Route::post('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assign-role');
+    Route::resource('usuarios', UserController::class);
+    Route::post('usuarios/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('usuarios.toggle-status');
+    Route::post('usuarios/{user}/assign-role', [UserController::class, 'assignRole'])->name('usuarios.assign-role');
 });
 
-// ==========================================
 // GESTIÓN Y ADMINISTRACIÓN (ADMIN, SUPER_ADMIN Y JUEZ)
-// ==========================================
 // Permitimos entrar a 'admin', 'super_admin' O 'juez' usando el middleware de roles de Spatie
 Route::middleware(['auth', 'verified', 'role:admin|super_admin|juez'])->prefix('admin')->name('admin.')->group(function () {
     
-    // -----------------------------------------------------------
-    // 1. RUTAS COMPARTIDAS (ADMIN, SUPER_ADMIN Y JUEZ)
-    // -----------------------------------------------------------
-    
-    // Ver lista de concursos (El Juez solo verá opción de "Ver Equipos")
-    Route::get('/concursos', [AdminContestController::class, 'index'])->name('contests.index');
-    
-    // Ver equipos dentro de un concurso
-    Route::get('/concursos/{id}/equipos', [AdminContestController::class, 'teams'])->name('contests.teams');
-    
-    // Calificar equipo (Acción principal del Juez)
-    Route::post('contests/{contest}/teams/{registration}/grade', [AdminContestController::class, 'gradeTeam'])->name('contests.teams.grade');
-
-    // -----------------------------------------------------------
-    // 2. RUTAS EXCLUSIVAS DE ADMIN Y SUPER_ADMIN (El Juez NO entra aquí)
-    // -----------------------------------------------------------
+    // 1. RUTAS EXCLUSIVAS DE ADMIN Y SUPER_ADMIN
     Route::middleware(['role:admin|super_admin'])->group(function () {
         
-        // Gestión Avanzada de Concursos (Crear, Borrar, Cerrar)
-        Route::get('/concursos/crear', [AdminContestController::class, 'create'])->name('contests.create');
-        Route::post('/concursos', [AdminContestController::class, 'store'])->name('contests.store');
-        Route::delete('/concursos/{id}', [AdminContestController::class, 'destroy'])->name('contests.destroy');
-        Route::post('/concursos/{id}/cerrar', [AdminContestController::class, 'close'])->name('contests.close');
+        // Gestión Avanzada de Concursos - Rutas específicas ANTES de genéricas
+        Route::get('/concursos/crear', [AdminContestController::class, 'create'])->name('concursos.create');
+        Route::post('/concursos', [AdminContestController::class, 'store'])->name('concursos.store');
+        Route::post('/concursos/{id}/cerrar', [AdminContestController::class, 'close'])->name('concursos.close');
+        Route::delete('/concursos/{id}', [AdminContestController::class, 'destroy'])->name('concursos.destroy');
         
         // Gestión Avanzada de Equipos (Eliminar, Clasificar manualmente)
-        Route::delete('/concursos/{contestId}/equipos/{registrationId}', [AdminContestController::class, 'deleteTeam'])->name('contests.teams.delete');
-        Route::post('/concursos/{contestId}/equipos/{registrationId}/clasificar', [AdminContestController::class, 'qualify'])->name('contests.teams.qualify');
-        Route::post('/concursos/{contestId}/equipos/{registrationId}/desclasificar', [AdminContestController::class, 'disqualify'])->name('contests.teams.disqualify');
+        Route::delete('/concursos/{contestId}/equipos/{registrationId}', [AdminContestController::class, 'deleteTeam'])->name('concursos.equipos.delete');
+        Route::post('/concursos/{contestId}/equipos/{registrationId}/clasificar', [AdminContestController::class, 'qualify'])->name('concursos.equipos.qualify');
+        Route::post('/concursos/{contestId}/equipos/{registrationId}/desclasificar', [AdminContestController::class, 'disqualify'])->name('concursos.equipos.disqualify');
         
-        // Gestión de Jueces (CRUD completo)
-        Route::get('/jueces', [JudgeController::class, 'index'])->name('judges.index');
-        Route::get('/jueces/crear', [JudgeController::class, 'create'])->name('judges.create');
-        Route::post('/jueces', [JudgeController::class, 'store'])->name('judges.store');
-        Route::get('/jueces/{judge}/editar', [JudgeController::class, 'edit'])->name('judges.edit');
-        Route::put('/jueces/{judge}', [JudgeController::class, 'update'])->name('judges.update');
-        Route::delete('/jueces/{judge}', [JudgeController::class, 'destroy'])->name('judges.destroy');
-        Route::post('/jueces/{judge}/toggle-status', [JudgeController::class, 'toggleStatus'])->name('judges.toggle-status');
-        
-        // Asignaciones de Jueces
-        Route::get('/jueces/{judge}/asignaciones', [JudgeController::class, 'assignments'])->name('judges.assignments');
-        Route::post('/jueces/{judge}/asignar', [JudgeController::class, 'assignToContest'])->name('judges.assign');
-        Route::delete('/jueces/{judge}/concursos/{contest}', [JudgeController::class, 'removeFromContest'])->name('judges.remove-contest');
+        // Gestión de Jueces (CRUD completo) - Rutas específicas primero
+        Route::get('/jueces/crear', [JudgeController::class, 'create'])->name('jueces.create');
+        Route::get('/jueces/{judge}/editar', [JudgeController::class, 'edit'])->name('jueces.edit');
+        Route::get('/jueces/{judge}/asignaciones', [JudgeController::class, 'assignments'])->name('jueces.assignments');
+        Route::get('/jueces', [JudgeController::class, 'index'])->name('jueces.index');
+        Route::post('/jueces', [JudgeController::class, 'store'])->name('jueces.store');
+        Route::put('/jueces/{judge}', [JudgeController::class, 'update'])->name('jueces.update');
+        Route::delete('/jueces/{judge}', [JudgeController::class, 'destroy'])->name('jueces.destroy');
+        Route::post('/jueces/{judge}/toggle-status', [JudgeController::class, 'toggleStatus'])->name('jueces.toggle-status');
+        Route::post('/jueces/{judge}/asignar', [JudgeController::class, 'assignToContest'])->name('jueces.assign');
+        Route::delete('/jueces/{judge}/concursos/{contest}', [JudgeController::class, 'removeFromContest'])->name('jueces.remove-contest');
     });
+    
+    // 2. RUTAS COMPARTIDAS (ADMIN, SUPER_ADMIN Y JUEZ)
+    
+    // Calificar equipo (Acción principal del Juez) - Ruta específica primero
+    Route::post('/concursos/{contest}/equipos/{registration}/calificar', [AdminContestController::class, 'gradeTeam'])->name('concursos.equipos.grade');
+    
+    // Ver equipos dentro de un concurso
+    Route::get('/concursos/{id}/equipos', [AdminContestController::class, 'teams'])->name('concursos.teams');
+    
+    // Ver lista de concursos - Ruta genérica al final
+    Route::get('/concursos', [AdminContestController::class, 'index'])->name('concursos.index');
 });
 
 // Rutas de Breeze

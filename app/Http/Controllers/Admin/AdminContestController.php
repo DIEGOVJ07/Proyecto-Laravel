@@ -68,7 +68,7 @@ class AdminContestController extends Controller
 
         Contest::create($validated);
 
-        return redirect()->route('admin.contests.index')->with('success', 'Concurso creado exitosamente');
+        return redirect()->route('admin.concursos.index')->with('success', 'Concurso creado exitosamente');
     }
 
     /**
@@ -108,7 +108,7 @@ class AdminContestController extends Controller
         $contest = Contest::findOrFail($id);
         $contest->delete();
 
-        return redirect()->route('admin.contests.index')->with('success', 'Concurso eliminado exitosamente');
+        return redirect()->route('admin.concursos.index')->with('success', 'Concurso eliminado exitosamente');
     }
 
     /**
