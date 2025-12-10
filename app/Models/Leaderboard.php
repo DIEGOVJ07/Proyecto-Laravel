@@ -11,12 +11,14 @@ class Leaderboard extends Model
 {
     use HasFactory;
 
+    // Nombre exacto de la tabla en tu base de datos
     protected $table = 'leaderboard';
 
     protected $fillable = [
         'contest_id',
         'user_id',
         'points',
+        'problems_solved',
         'rank',
         'is_winner',
         'prize_claimed',

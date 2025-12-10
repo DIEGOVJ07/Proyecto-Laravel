@@ -49,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/concursos/{id}', [ContestController::class, 'show'])->name('contests.show');
     Route::post('/concursos/{id}/registrar', [ContestController::class, 'register'])->name('contests.register');
     Route::delete('/concursos/{id}/cancelar', [ContestController::class, 'cancelRegistration'])->name('contests.cancel');
+    
+    // --- RUTA DE CERTIFICADO (MOVIDA AQUÍ PARA QUE FUNCIONE) ---
+    Route::post('/concursos/{id}/certificado', [ContestController::class, 'requestCertificate'])->name('contests.certificate');
+    // -----------------------------------------------------------
 
     // Gestión de Equipos (Participante)
     Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('teams.search');
