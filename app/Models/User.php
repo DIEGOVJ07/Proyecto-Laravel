@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+// ↓↓↓ AQUÍ ESTÁ EL CAMBIO IMPORTANTE: agregamos "implements MustVerifyEmail"
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -60,8 +61,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(ContestRegistration::class);
     }
-
-    // En app/Models/User.php
-
-
 }
