@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Trust all proxies in production (Railway)
-        if (config('app.env') === 'production') {
+        if (env('APP_ENV') === 'production') {
             $middleware->trustProxies(at: '*');
         }
         
