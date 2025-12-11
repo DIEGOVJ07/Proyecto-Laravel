@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminContestController;
 use App\Http\Controllers\Admin\JudgeController;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Mail;
 
 // PÁGINA PÚBLICA
 Route::get('/', WelcomeController::class)->name('welcome');
