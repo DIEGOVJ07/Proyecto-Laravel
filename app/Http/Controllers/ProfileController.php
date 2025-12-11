@@ -26,11 +26,12 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Calcular estadísticas reales
-        $totalPoints = $user->leaderboard->points ?? 0;
+        // Calcular estadísticas reales con verificación segura
+        $leaderboard = $user->leaderboard()->first();
+        $totalPoints = $leaderboard ? $leaderboard->points : 0;
         $totalContests = $myRegistrations->count();
         $contestsWon = $myRegistrations->where('score', '>=', 80)->count(); // Considerar ganado si score >= 80
-        $globalRanking = $user->leaderboard->rank ?? '-';
+        $globalRanking = $leaderboard ? $leaderboard->rank : '-';
 
         // Obtener concursos ganados (con mejor posición)
         $wonContests = $myRegistrations
