@@ -129,3 +129,16 @@ Route::get('/concursos-publicos', [ContestController::class, 'index'])->name('co
 
 // Rutas de Breeze
 require __DIR__.'/auth.php';
+
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Este es un correo de prueba enviado con Resend + Laravel + Railway', function ($message) {
+            $message->to('codebattle61@gmail.com')
+                    ->subject('Prueba de correo con Resend');
+        });
+
+        return "Correo enviado correctamente (verifica tu bandeja).";
+    } catch (\Throwable $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
