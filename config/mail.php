@@ -6,14 +6,24 @@ return [
     |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
+    |
+    | This option controls the default mailer that is used to send any email
+    | messages sent by your application. Alternative mailers may be setup
+    | and used as needed; however, this mailer will be used by default.
+    |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
+    |
+    | Here, you may configure all of the mailers used by your application plus
+    | their respective settings. Several examples have been configured for
+    | you and you are free to add your own as your application requires.
+    |
     */
 
     'mailers' => [
@@ -28,18 +38,22 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'local_domain' => env(
+                'MAIL_EHLO_DOMAIN',
+                parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)
+            ),
 
-            // Si tienes problemas SSL solo temporalmente puedes habilitar stream,
-            // pero NO lo dejes así en producción (es inseguro).
-            // 'stream' => [
-            //     'ssl' => [
-            //         'allow_self_signed' => true,
-            //         'verify_peer' => false,
-            //         'verify_peer_name' => false,
-            //     ],
-            // ],
-        ],
+            // Si necesitas debug SSL temporalmente, puedes descomentar esto,
+            // pero no lo dejes habilitado en producción:
+            /*
+            'stream' => [
+                'ssl' => [
+                    'allow_self_signed' => true,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ],
+            */
         ],
 
         'ses' => [
@@ -92,6 +106,11 @@ return [
     |--------------------------------------------------------------------------
     | Global "From" Address
     |--------------------------------------------------------------------------
+    |
+    | You may wish for all e-mails sent by your application to be sent from
+    | the same address. Here, you may specify a name and address that is
+    | used globally for all e-mails that are sent by your application.
+    |
     */
 
     'from' => [
