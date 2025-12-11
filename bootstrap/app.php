@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust all proxies in production (Railway)
+        if (config('app.env') === 'production') {
+            $middleware->trustProxies(at: '*');
+        }
+        
         $middleware->alias([
             // Tu middleware personalizado
             'admin' => \App\Http\Middleware\AdminMiddleware::class,

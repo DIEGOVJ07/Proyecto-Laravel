@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
         // Force HTTPS in production
         if (config('app.env') === 'production') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            
+            // Trust Railway proxies for proper session handling
+            request()->server->set('HTTPS', 'on');
         }
 
         // Personalizar el correo de verificación
