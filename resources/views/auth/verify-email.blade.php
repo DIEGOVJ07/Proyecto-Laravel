@@ -61,10 +61,15 @@
 
                 {{-- Botones --}}
                 <div class="space-y-4">
-                    <form method="POST" action="{{ route('verification.send') }}">
+                    <form method="POST" action="{{ route('verification.send') }}" id="resendForm">
                         @csrf
-                        <button type="submit" class="w-full py-3.5 bg-[#10b981] hover:bg-[#059669] text-white font-bold rounded-xl transition-all duration-300 shadow-lg shadow-[#10b981]/20 hover:shadow-[#10b981]/40 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase tracking-wide text-xs">
-                            <i class="fas fa-paper-plane"></i> Reenviar Correo
+                        <button 
+                            type="submit" 
+                            id="resendButton"
+                            class="w-full py-3.5 bg-[#10b981] hover:bg-[#059669] text-white font-bold rounded-xl transition-all duration-300 shadow-lg shadow-[#10b981]/20 hover:shadow-[#10b981]/40 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase tracking-wide text-xs disabled:bg-gray-600 disabled:cursor-not-allowed disabled:hover:transform-none disabled:shadow-none"
+                        >
+                            <i class="fas fa-paper-plane"></i> 
+                            <span id="buttonText">Reenviar Correo</span>
                         </button>
                     </form>
 
@@ -89,6 +94,64 @@
             &copy; {{ date('Y') }} CodeBattle Platform.
         </p>
     </div>
+
+    <script>
+        // Verificar si hay un cooldown activo al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            checkCooldown();
+        });
+
+        document.getElementById('resendForm').addEventListener('submit', function(e) {
+            const button = document.getElementById('resendButton');
+            const buttonText = document.getElementById('buttonText');
+            
+            // Deshabilitar el botón inmediatamente
+            button.disabled = true;
+            buttonText.textContent = 'Enviando...';
+            
+            // Guardar el timestamp del envío
+            localStorage.setItem('emailResendTime', Date.now());
+        });
+
+        // Verificar si hay un cooldown activo
+        function checkCooldown() {
+            const lastResendTime = localStorage.getItem('emailResendTime');
+            
+            if (lastResendTime) {
+                const elapsedTime = Date.now() - parseInt(lastResendTime);
+                const cooldownTime = 60000; // 60 segundos en milisegundos
+                
+                if (elapsedTime < cooldownTime) {
+                    startCooldown(Math.ceil((cooldownTime - elapsedTime) / 1000));
+                }
+            }
+        }
+
+        // Iniciar el temporizador de cooldown
+        function startCooldown(secondsRemaining) {
+            const button = document.getElementById('resendButton');
+            const buttonText = document.getElementById('buttonText');
+            
+            button.disabled = true;
+            
+            const countdown = setInterval(function() {
+                if (secondsRemaining <= 0) {
+                    clearInterval(countdown);
+                    button.disabled = false;
+                    buttonText.textContent = 'Reenviar Correo';
+                    localStorage.removeItem('emailResendTime');
+                } else {
+                    buttonText.textContent = `Espera ${secondsRemaining}s`;
+                    secondsRemaining--;
+                }
+            }, 1000);
+        }
+
+        // Si se acaba de enviar un correo (detectar mensaje flash)
+        @if (session('status') == 'verification-link-sent')
+            startCooldown(60);
+        @endif
+    </script>
 
 </body>
 </html>
