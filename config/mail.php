@@ -45,7 +45,6 @@ return [
 
             // Si necesitas debug SSL temporalmente, puedes descomentar esto,
             // pero no lo dejes habilitado en producción:
-            /*
             'stream' => [
                 'ssl' => [
                     'allow_self_signed' => true,
@@ -53,7 +52,6 @@ return [
                     'verify_peer_name' => false,
                 ],
             ],
-            */
         ],
 
         'ses' => [
