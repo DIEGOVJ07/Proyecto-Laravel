@@ -199,31 +199,73 @@
                                 </div>
 
                             @else
-                                {{-- VISTA: FORMULARIO DE REGISTRO --}}
+                                {{-- VISTA: FORMULARIO DE REGISTRO MEJORADO --}}
                                 <div class="text-center mb-6">
-                                    <h3 class="text-xl font-bold text-white">Registro</h3>
-                                    <p class="text-xs text-gray-500 mt-1">Únete al desafío</p>
+                                    <div class="w-16 h-16 bg-gradient-to-br from-[#10b981] to-[#059669] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#10b981]/30">
+                                        <i class="fas fa-user-plus text-white text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-white mb-1">Únete al Desafío</h3>
+                                    <p class="text-xs text-gray-400">Crea tu equipo o únete a uno existente</p>
                                 </div>
 
-                                <form action="{{ route('concursos.register', $event->id) }}" method="POST" class="space-y-4">
+                                {{-- Botón para ver equipos públicos --}}
+                                <a href="{{ route('equipos.public', $event->id) }}" class="block mb-6 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/50 text-purple-300 font-bold py-3 px-4 rounded-xl transition-all duration-300 text-sm text-center group shadow-md hover:shadow-purple-500/20">
+                                    <i class="fas fa-users mr-2 group-hover:scale-110 transition-transform inline-block"></i> 
+                                    <span>Ver Equipos Públicos Disponibles</span>
+                                    <i class="fas fa-arrow-right ml-2 text-xs opacity-60 group-hover:translate-x-1 transition-transform inline-block"></i>
+                                </a>
+
+                                <div class="relative mb-6">
+                                    <div class="absolute inset-0 flex items-center">
+                                        <div class="w-full border-t border-[#2c3240]"></div>
+                                    </div>
+                                    <div class="relative flex justify-center text-xs uppercase">
+                                        <span class="bg-[#151a25] px-3 text-gray-500 font-bold">O crea tu equipo</span>
+                                    </div>
+                                </div>
+
+                                <form action="{{ route('concursos.register', $event->id) }}" method="POST" class="space-y-5">
                                     @csrf
-                                    <div>
-                                        <label class="text-[10px] text-gray-500 uppercase font-bold mb-1.5 block tracking-wider">Nombre del Equipo</label>
-                                        <input type="text" name="team_name" class="w-full bg-[#0f111a] border border-[#2c3240] rounded-lg text-white text-sm px-4 py-3 focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] outline-none placeholder-gray-600 transition" placeholder="Ej: CodeWarriors" required>
+                                    
+                                    {{-- Nombre del Equipo --}}
+                                    <div class="relative">
+                                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-2 block tracking-wider flex items-center gap-2">
+                                            <i class="fas fa-shield-alt text-[#10b981]"></i>
+                                            Nombre del Equipo
+                                        </label>
+                                        <input type="text" name="team_name" class="w-full bg-[#0f111a] border-2 border-[#2c3240] rounded-xl text-white text-sm px-4 py-3.5 focus:border-[#10b981] focus:ring-2 focus:ring-[#10b981]/20 outline-none placeholder-gray-600 transition-all" placeholder="Ej: CodeWarriors" required>
                                     </div>
                                     
-                                    <div>
-                                        <label class="text-[10px] text-gray-500 uppercase font-bold mb-1.5 block tracking-wider">Miembros (Max: {{ $event->max_team_members }})</label>
-                                        <input type="number" name="max_members" value="1" min="{{ $event->min_team_members }}" max="{{ $event->max_team_members }}" class="w-full bg-[#0f111a] border border-[#2c3240] rounded-lg text-white text-sm px-4 py-3 focus:border-[#10b981] outline-none transition">
+                                    {{-- Número de Miembros --}}
+                                    <div class="relative">
+                                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-2 block tracking-wider flex items-center gap-2">
+                                            <i class="fas fa-user-friends text-[#10b981]"></i>
+                                            Tamaño del Equipo
+                                        </label>
+                                        <div class="flex items-center gap-3 bg-[#0f111a] border-2 border-[#2c3240] rounded-xl px-4 py-3 focus-within:border-[#10b981] focus-within:ring-2 focus-within:ring-[#10b981]/20 transition-all">
+                                            <input type="number" name="max_members" value="1" min="{{ $event->min_team_members }}" max="{{ $event->max_team_members }}" class="flex-1 bg-transparent text-white text-sm outline-none">
+                                            <span class="text-xs text-gray-500 font-medium">/ {{ $event->max_team_members }} máx</span>
+                                        </div>
                                     </div>
 
-                                    <div class="flex items-center gap-2 py-2">
-                                        <input type="checkbox" name="is_public" id="is_public" class="rounded bg-[#0f111a] border-[#2c3240] text-[#10b981] focus:ring-0 w-4 h-4">
-                                        <label for="is_public" class="text-xs text-gray-400 cursor-pointer select-none">Hacer equipo público</label>
+                                    {{-- Equipo Público --}}
+                                    <div class="bg-[#0f111a] border border-[#2c3240] rounded-xl p-4">
+                                        <label class="flex items-start gap-3 cursor-pointer group">
+                                            <input type="checkbox" name="is_public" id="is_public" class="mt-1 rounded-md bg-[#151a25] border-[#2c3240] text-[#10b981] focus:ring-2 focus:ring-[#10b981]/30 w-5 h-5 transition">
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-white group-hover:text-[#10b981] transition">Equipo Público</span>
+                                                <p class="text-xs text-gray-400 mt-1">Otros usuarios podrán encontrar y unirse a tu equipo</p>
+                                            </div>
+                                        </label>
                                     </div>
 
-                                    <button type="submit" class="w-full bg-[#10b981] hover:bg-[#059669] text-white font-bold py-3.5 rounded-lg transition-all duration-200 shadow-lg shadow-[#10b981]/20 text-sm uppercase tracking-wide">
-                                        Inscribirse Ahora
+                                    {{-- Botón de Registro --}}
+                                    <button type="submit" class="w-full bg-gradient-to-r from-[#10b981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg shadow-[#10b981]/30 hover:shadow-[#10b981]/50 text-sm uppercase tracking-wide group">
+                                        <span class="flex items-center justify-center gap-2">
+                                            <i class="fas fa-rocket group-hover:translate-y-[-2px] transition-transform"></i>
+                                            Crear Equipo e Inscribirse
+                                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                        </span>
                                     </button>
                                 </form>
                             @endif

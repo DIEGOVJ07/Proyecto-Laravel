@@ -13,6 +13,20 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class ContestController extends Controller
 {
     /**
+     * Mostrar todos los concursos disponibles (Activos, Próximos y Próximamente)
+     */
+    public function index()
+    {
+        $contests = Contest::withCount('registrations')
+            ->whereIn('status', ['Activo', 'Próximo', 'Próximamente'])
+            ->orderByRaw("FIELD(status, 'Activo', 'Próximo', 'Próximamente')")
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        return view('concursos.index', compact('contests'));
+    }
+
+    /**
      * Mostrar detalles del concurso
      */
     public function show($id)
@@ -37,9 +51,9 @@ class ContestController extends Controller
             $registration = ContestRegistration::where('contest_id', $id)
                 ->where(function($q) use ($user) {
                     $q->where('user_id', $user->id) // Es líder
-                      ->orWhereHas('members', function($sq) use ($user) {
-                          $sq->where('user_id', $user->id); // Es miembro
-                      });
+                        ->orWhereHas('members', function($sq) use ($user) {
+                            $sq->where('user_id', $user->id); // Es miembro
+                        });
                 })
                 ->first();
 
@@ -73,9 +87,9 @@ class ContestController extends Controller
         $existingRegistration = ContestRegistration::where('contest_id', $id)
             ->where(function($q) {
                 $q->where('user_id', Auth::id())
-                  ->orWhereHas('members', function($sq) {
-                      $sq->where('user_id', Auth::id());
-                  });
+                    ->orWhereHas('members', function($sq) {
+                        $sq->where('user_id', Auth::id());
+                    });
             })
             ->first();
 
@@ -137,9 +151,9 @@ class ContestController extends Controller
         $registration = ContestRegistration::where('contest_id', $id)
             ->where(function($q) use ($user) {
                 $q->where('user_id', $user->id) // Si es el líder
-                  ->orWhereHas('members', function($subQ) use ($user) {
-                      $subQ->where('user_id', $user->id); // Si es miembro
-                  });
+                    ->orWhereHas('members', function($subQ) use ($user) {
+                        $subQ->where('user_id', $user->id); // Si es miembro
+                    });
             })
             ->first();
 
@@ -176,7 +190,7 @@ class ContestController extends Controller
 
             // Generar el PDF en memoria
             $pdf = Pdf::loadView('pdf.certificate', $data)
-                      ->setPaper('a4', 'landscape');
+                        ->setPaper('a4', 'landscape');
             
             $pdfContent = $pdf->output();
 
@@ -204,9 +218,9 @@ class ContestController extends Controller
         $registration = ContestRegistration::where('contest_id', $id)
             ->where(function($q) {
                 $q->where('user_id', Auth::id())
-                  ->orWhereHas('members', function($sq) {
-                      $sq->where('user_id', Auth::id());
-                  });
+                    ->orWhereHas('members', function($sq) {
+                        $sq->where('user_id', Auth::id());
+                    });
             })
             ->firstOrFail();
 
@@ -242,10 +256,10 @@ class ContestController extends Controller
         $registration = ContestRegistration::where('contest_id', $id)
             ->where(function($q) {
                 $q->where('user_id', Auth::id())
-                  ->orWhereHas('members', function($sq) {
-                      $sq->where('user_id', Auth::id());
-                  });
-            })
+                    ->orWhereHas('members', function($sq) {
+                        $sq->where('user_id', Auth::id());
+                    });
+                })
             ->firstOrFail();
 
         $registration->update([
@@ -265,8 +279,8 @@ class ContestController extends Controller
         // Verificar permisos: Juez, Admin, Super Admin o miembro del equipo
         $user = Auth::user();
         $canDownload = $user->hasAnyRole(['super_admin', 'admin', 'juez']) ||
-                       $registration->user_id == $user->id ||
-                       $registration->members()->where('user_id', $user->id)->exists();
+                        $registration->user_id == $user->id ||
+                        $registration->members()->where('user_id', $user->id)->exists();
 
         if (!$canDownload) {
             abort(403, 'No tienes permisos para descargar este archivo.');

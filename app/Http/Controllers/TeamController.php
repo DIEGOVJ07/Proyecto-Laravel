@@ -100,8 +100,9 @@ class TeamController extends Controller
         $contest = Contest::findOrFail($contestId);
         $teams = ContestRegistration::where('contest_id', $contestId)
                                     ->where('is_public', true)
-                                    ->where('current_members', '<', 'max_members')
+                                    ->whereRaw('current_members < max_members')
                                     ->with(['user', 'members.user'])
+                                    ->orderBy('created_at', 'desc')
                                     ->get();
 
         return view('equipos.public', compact('contest', 'teams'));

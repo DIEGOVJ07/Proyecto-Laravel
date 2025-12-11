@@ -9,17 +9,15 @@ class WelcomeController extends Controller
 {
     public function __invoke()
     {
-        // 1. Obtener todos los concursos
-        $contests = Contest::whereIn('status', ['Activo', 'Próximamente'])
-                          ->orderBy('start_date', 'asc')
-                          ->get();
+        // Obtener concursos Activos, Próximos y Próximamente
+        $contests = Contest::whereIn('status', ['Activo', 'Próximo', 'Próximamente'])
+                            ->orderByRaw("FIELD(status, 'Activo', 'Próximo', 'Próximamente')")
+                            ->orderBy('start_date', 'asc')
+                            ->get();
 
-        // 2. OBTENER EL PRIMER CONCURSO DE LA LISTA
-        // Esto crea la variable $nextEvent que te falta
+        // Obtener el primer concurso
         $nextEvent = $contests->first();
 
-        // 3. ENVIAR AMBAS VARIABLES A LA VISTA
-        // Nota que ahora incluimos 'nextEvent' dentro de compact
         return view('welcome', compact('contests', 'nextEvent'));
     }
 }

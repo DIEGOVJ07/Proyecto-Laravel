@@ -14,17 +14,45 @@ class LeaderboardController extends Controller
 {
     public function index()
     {
+        $userId = Auth::id();
+        
+        // Buscar registros donde el usuario es líder
+        $leaderContestIds = ContestRegistration::where('user_id', $userId)
+            ->pluck('contest_id')
+            ->toArray();
+        
+        // Buscar registros donde el usuario es miembro
+        $memberContestIds = ContestRegistration::whereHas('members', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->pluck('contest_id')
+            ->toArray();
+        
+        // Combinar ambos arrays y eliminar duplicados
+        $userContestIds = array_unique(array_merge($leaderContestIds, $memberContestIds));
+
+        // Mostrar concursos finalizados donde el usuario participó
         $eventosFinalizados = Contest::where('status', 'Finalizado')
+            ->whereIn('id', $userContestIds)
             ->withCount('leaderboardParticipants as participants_count')
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        // Obtener concursos activos y próximos donde el usuario está participando
+        $eventosActivos = Contest::whereIn('status', ['Activo', 'Próximo', 'Próximamente'])
+            ->whereIn('id', $userContestIds)
+            ->withCount('registrations as participants_count')
             ->orderBy('start_date', 'desc')
             ->get();
 
         $stats = [
             'total_users' => User::count(),
             'total_events_finished' => $eventosFinalizados->count(),
+            'total_events_active' => $eventosActivos->count(),
+            'my_participations' => count($userContestIds),
         ];
 
-        return view('clasificacion.index', compact('eventosFinalizados', 'stats'));
+        return view('clasificacion.index', compact('eventosFinalizados', 'eventosActivos', 'stats'));
     }
 
     public function show($id)

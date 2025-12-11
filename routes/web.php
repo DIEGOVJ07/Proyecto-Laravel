@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Gestión de Equipos (Participante) - Rutas específicas primero
+    Route::get('/equipos/buscar', function() { return view('equipos.search'); })->name('equipos.search.form');
     Route::post('/equipos/buscar', [TeamController::class, 'search'])->name('equipos.search');
     Route::post('/equipos/{team}/unirse', [TeamController::class, 'join'])->name('equipos.join');
     Route::delete('/equipos/{team}/salir', [TeamController::class, 'leave'])->name('equipos.leave');
@@ -122,6 +123,9 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin|juez'])->prefix('
     // Ver lista de concursos - Ruta genérica al final
     Route::get('/concursos', [AdminContestController::class, 'index'])->name('concursos.index');
 });
+
+// Ruta pública de concursos
+Route::get('/concursos-publicos', [ContestController::class, 'index'])->name('concursos.public');
 
 // Rutas de Breeze
 require __DIR__.'/auth.php';

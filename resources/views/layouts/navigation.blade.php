@@ -21,7 +21,7 @@
                     @auth
                         {{-- Concursos --}}
                         @can('ver-concursos')
-                            <x-nav-link href="{{ route('welcome') }}#concursos" :active="false">
+                            <x-nav-link :href="route('concursos.public')" :active="request()->routeIs('concursos.public')">
                                 <i class="fas fa-trophy mr-2"></i>
                                 {{ __('Concursos') }}
                             </x-nav-link>
@@ -34,6 +34,12 @@
                                 {{ __('Clasificación') }}
                             </x-nav-link>
                         @endcan
+
+                        {{-- Unirse a Equipo --}}
+                        <x-nav-link :href="route('equipos.search.form')" :active="request()->routeIs('equipos.*')">
+                            <i class="fas fa-users mr-2"></i>
+                            {{ __('Unirse a Equipo') }}
+                        </x-nav-link>
 
                         {{-- Blog --}}
                         @can('ver-blog')
@@ -209,7 +215,7 @@
                 </x-responsive-nav-link>
 
                 @can('ver-concursos')
-                <x-responsive-nav-link href="{{ route('welcome') }}#concursos" :active="false">
+                <x-responsive-nav-link :href="route('concursos.public')" :active="request()->routeIs('concursos.public')">
                     <i class="fas fa-trophy mr-2"></i>
                     {{ __('Concursos') }}
                 </x-responsive-nav-link>
@@ -221,6 +227,11 @@
                     {{ __('Clasificación') }}
                 </x-responsive-nav-link>
                 @endcan
+
+                <x-responsive-nav-link :href="route('equipos.search.form')" :active="request()->routeIs('equipos.*')">
+                    <i class="fas fa-users mr-2"></i>
+                    {{ __('Unirse a Equipo') }}
+                </x-responsive-nav-link>
 
                 @can('ver-blog')
                 <x-responsive-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">

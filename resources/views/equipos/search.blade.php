@@ -33,12 +33,12 @@
                     <div>
                         <label class="block text-gray-300 font-medium mb-2">Código del Equipo</label>
                         <input type="text" 
-                               name="team_code" 
-                               maxlength="5" 
-                               required
-                               placeholder="Ej: A1B2C"
-                               class="w-full bg-cb-dark border border-cb-border rounded-lg px-6 py-4 text-white text-center text-2xl font-bold uppercase tracking-widest focus:border-cb-green focus:ring focus:ring-cb-green/20 transition"
-                               style="letter-spacing: 0.5em;">
+                            name="team_code" 
+                            maxlength="5" 
+                            required
+                            placeholder="Ej: A1B2C"
+                            class="w-full bg-cb-dark border border-cb-border rounded-lg px-6 py-4 text-white text-center text-2xl font-bold uppercase tracking-widest focus:border-cb-green focus:ring focus:ring-cb-green/20 transition"
+                            style="letter-spacing: 0.5em;">
                         @error('team_code')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror

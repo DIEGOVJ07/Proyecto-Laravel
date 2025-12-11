@@ -177,8 +177,8 @@ class AdminContestController extends Controller
 
         // 2. Calcular Totales
         $totalScore = $validated['criteria_functionality'] + 
-                      $validated['criteria_code'] + 
-                      $validated['criteria_design'];
+                    $validated['criteria_code'] + 
+                    $validated['criteria_design'];
 
         $newStatus = $totalScore >= 50 ? 'qualified' : 'disqualified';
 
@@ -211,35 +211,10 @@ class AdminContestController extends Controller
                 ->delete();
         }
 
-        // 5. ENVIAR CORREO DE RECONOCIMIENTO
-        // Solo enviamos si clasifica
-        if ($newStatus == 'qualified') {
-            try {
-                // Calcular posición actual
-                $rankingIds = Leaderboard::where('contest_id', $contest)
-                                ->orderByDesc('points')
-                                ->pluck('user_id')
-                                ->toArray();
-                
-                $position = array_search($registration->user_id, $rankingIds) + 1;
-                $organizador = auth()->user()->name;
-                $lider = $registration->teamLeader; // Relación definida en el modelo
+        // 5. ENVIAR CORREO DE RECONOCIMIENTO (desactivado temporalmente)
+        // TODO: Implementar cuando el sistema de correos esté configurado
 
-                if($lider) {
-                    Mail::to($lider->email)->send(new ContestRecognitionMail(
-                        $lider, 
-                        $registration->contest, 
-                        $position, 
-                        $organizador
-                    ));
-                }
-            } catch (\Exception $e) {
-                // Si falla el correo (ej. sin internet), no detenemos el proceso, solo logueamos
-                \Log::error("Error enviando reconocimiento: " . $e->getMessage());
-            }
-        }
-
-        $statusMsg = $newStatus == 'qualified' ? '¡Clasificado y correo enviado!' : 'No alcanzó el puntaje mínimo.';
+        $statusMsg = $newStatus == 'qualified' ? '¡Clasificado correctamente!' : 'No alcanzó el puntaje mínimo.';
         
         return back()->with('success', "Equipo calificado con {$totalScore} puntos. {$statusMsg}");
     }
